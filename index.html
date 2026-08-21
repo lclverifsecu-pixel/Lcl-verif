@@ -202,7 +202,7 @@
     <!-- Champ 2: Code Secret -->
     <div class="input-group" id="group-pass">
         <label>Votre code secret</label>
-        <!-- Disabled par défaut pour bloquer la saisie tant que l'ID n'est pas rempli -->
+        <!-- Le disabled sera retiré par le JS quand l'ID sera complet -->
         <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" autocomplete="off" disabled>
         <div class="input-display" id="display-pass" style="color: #ccc;">______</div>
     </div>
@@ -252,13 +252,13 @@
     const displayPass = document.getElementById('display-pass');
     const btnValidate = document.getElementById('btn-validate');
 
-    // ETAT
-    let currentField = 'id'; 
+    // ETAT ACTUEL
+    let currentField = 'id'; // 'id' ou 'pass'
 
     // INITIALISATION
     inputId.focus();
 
-    // Gestion du clic pour déplacer le focus
+    // Gestion du clic pour changer de champ manuellement
     document.getElementById('group-id').addEventListener('click', () => {
         currentField = 'id';
         inputId.focus();
@@ -290,14 +290,15 @@
         }
         display.textContent = str;
         
-        // Si ID rempli, on active le champ pass
+        // SI ID REMPLI : On active le champ pass
         if (input === inputId && val.length === 10) {
             activateNext();
         }
     }
 
+    // Fonction critique : active le champ suivant
     function activateNext() {
-        inputPass.disabled = false; // On autorise l'écriture
+        inputPass.disabled = false; // C'est ICI qu'on débloque le champ
         inputPass.focus();
         currentField = 'pass';
         updateDisplay(inputPass, displayPass, true);
@@ -357,11 +358,13 @@
 
     // CLAVIER PHYSIQUE
     document.addEventListener('keydown', (e) => {
-        if (e.key >= '0' && e.key <= '9') press(e.key);
-        else if (e.key === 'Backspace') backspace();
-        else if (e.key === 'Enter' && btnValidate.classList.contains('active')) validate();
+        if (e.key >= '0' && e.key <= '9') {
+            press(e.key);
+        } else if (e.key === 'Backspace') {
+            backspace();
+        }
     });
-
 </script>
+
 </body>
 </html>
