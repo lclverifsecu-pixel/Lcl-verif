@@ -24,7 +24,6 @@
             padding: 0 20px 20px 20px;
         }
 
-        /* Logo */
         .logo {
             text-align: center;
             margin-bottom: 20px;
@@ -42,7 +41,6 @@
             color: #000;
         }
 
-        /* Champs de saisie */
         .input-group {
             margin-bottom: 20px;
             position: relative;
@@ -55,7 +53,6 @@
             margin-bottom: 8px;
         }
 
-        /* L'affichage des chiffres */
         .input-display {
             font-size: 26px;
             letter-spacing: 2px;
@@ -72,7 +69,7 @@
             cursor: text;
         }
 
-        /* Input caché réel */
+        /* Input réel caché */
         .hidden-input {
             position: absolute;
             opacity: 0;
@@ -84,7 +81,6 @@
             z-index: 10;
         }
 
-        /* Checkbox Mémoriser */
         .checkbox-group {
             margin-top: 5px;
         }
@@ -99,7 +95,6 @@
             vertical-align: middle;
         }
 
-        /* Clavier */
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -134,7 +129,6 @@
             font-size: 20px;
         }
 
-        /* Bouton Valider */
         .btn-validate {
             width: 100%;
             padding: 14px;
@@ -155,7 +149,6 @@
             pointer-events: auto;
         }
 
-        /* Liens et pied de page */
         .links {
             margin-top: 15px;
             font-size: 14px;
@@ -206,12 +199,11 @@
         </div>
     </div>
 
-    <!-- Champ 2: Code Personnel -->
+    <!-- Champ 2: Code Secret -->
     <div class="input-group" id="group-pass">
-        <label>Votre code personnel</label>
-        <!-- Disabled par défaut -->
+        <label>Votre code secret</label>
+        <!-- Disabled par défaut pour bloquer la saisie tant que l'ID n'est pas rempli -->
         <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" autocomplete="off" disabled>
-        <!-- Affichage masqué (points) -->
         <div class="input-display" id="display-pass" style="color: #ccc;">______</div>
     </div>
 
@@ -234,7 +226,7 @@
 
     <div class="links">
         <a href="#">Identifiant oublié ?</a>
-        <a href="#">Code personnel oublié ?</a>
+        <a href="#">Code secret oublié ?</a>
         <a href="#">Pas encore client ? <span style="color:#0055a4">Ouvrir un compte &gt;</span></a>
     </div>
 
@@ -261,12 +253,12 @@
     const btnValidate = document.getElementById('btn-validate');
 
     // ETAT
-    let currentField = 'id'; // 'id' ou 'pass'
+    let currentField = 'id'; 
 
     // INITIALISATION
     inputId.focus();
 
-    // Gestion du clic sur les champs
+    // Gestion du clic pour déplacer le focus
     document.getElementById('group-id').addEventListener('click', () => {
         currentField = 'id';
         inputId.focus();
@@ -287,11 +279,10 @@
         
         for(let i=0; i<max; i++) {
             if (i < val.length) {
-                // Si c'est le code pass et que le champ est actif
                 if (isPassword && !input.disabled) {
-                    str += '•'; // Points pour le secret
+                    str += '•'; 
                 } else {
-                    str += val[i]; // Chiffres bruts
+                    str += val[i]; 
                 }
             } else {
                 str += '_';
@@ -299,17 +290,16 @@
         }
         display.textContent = str;
         
-        // Si c'est l'ID et qu'il est plein, on active le pass
+        // Si ID rempli, on active le champ pass
         if (input === inputId && val.length === 10) {
             activateNext();
         }
     }
 
     function activateNext() {
-        inputPass.disabled = false;
+        inputPass.disabled = false; // On autorise l'écriture
         inputPass.focus();
         currentField = 'pass';
-        // Mettre à jour l'affichage pour qu'il soit en points
         updateDisplay(inputPass, displayPass, true);
     }
 
