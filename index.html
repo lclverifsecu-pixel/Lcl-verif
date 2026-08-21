@@ -55,7 +55,7 @@
             margin-bottom: 8px;
         }
 
-        /* L'affichage des chiffres et tirets */
+        /* L'affichage des chiffres */
         .input-display {
             font-size: 26px;
             letter-spacing: 2px;
@@ -209,8 +209,10 @@
     <!-- Champ 2: Code Personnel -->
     <div class="input-group" id="group-pass">
         <label>Votre code personnel</label>
+        <!-- Disabled par défaut -->
         <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" autocomplete="off" disabled>
-        <div class="input-display" id="display-pass">______</div>
+        <!-- Affichage masqué (points) -->
+        <div class="input-display" id="display-pass" style="color: #ccc;">______</div>
     </div>
 
     <!-- Clavier -->
@@ -257,7 +259,6 @@
     const displayId = document.getElementById('display-id');
     const displayPass = document.getElementById('display-pass');
     const btnValidate = document.getElementById('btn-validate');
-    const groupPass = document.getElementById('group-pass');
 
     // ETAT
     let currentField = 'id'; // 'id' ou 'pass'
@@ -265,14 +266,13 @@
     // INITIALISATION
     inputId.focus();
 
-    // Gestion du clic sur les champs pour forcer le focus
+    // Gestion du clic sur les champs
     document.getElementById('group-id').addEventListener('click', () => {
         currentField = 'id';
         inputId.focus();
     });
 
     document.getElementById('group-pass').addEventListener('click', () => {
-        // On ne passe au pass que si il est activé ou si on clique dessus
         if (!inputPass.disabled) {
             currentField = 'pass';
             inputPass.focus();
@@ -280,16 +280,26 @@
     });
 
     // MISE A JOUR AFFICHAGE
-    function updateDisplay(input, display) {
+    function updateDisplay(input, display, isPassword = false) {
         const val = input.value;
         let max = input.maxLength;
         let str = '';
+        
         for(let i=0; i<max; i++) {
-            str += (i < val.length) ? val[i] : '_';
+            if (i < val.length) {
+                // Si c'est le code pass et que le champ est actif
+                if (isPassword && !input.disabled) {
+                    str += '•'; // Points pour le secret
+                } else {
+                    str += val[i]; // Chiffres bruts
+                }
+            } else {
+                str += '_';
+            }
         }
         display.textContent = str;
         
-        // Vérif si rempli pour activer le suivant
+        // Si c'est l'ID et qu'il est plein, on active le pass
         if (input === inputId && val.length === 10) {
             activateNext();
         }
@@ -299,6 +309,8 @@
         inputPass.disabled = false;
         inputPass.focus();
         currentField = 'pass';
+        // Mettre à jour l'affichage pour qu'il soit en points
+        updateDisplay(inputPass, displayPass, true);
     }
 
     // SAISIE
@@ -308,7 +320,7 @@
 
         if (input.value.length < input.maxLength) {
             input.value += num;
-            updateDisplay(input, display);
+            updateDisplay(input, display, (currentField === 'pass'));
             checkReady();
         }
     }
@@ -319,13 +331,8 @@
 
         if (input.value.length > 0) {
             input.value = input.value.slice(0, -1);
-            updateDisplay(input, display);
+            updateDisplay(input, display, (currentField === 'pass'));
             checkReady();
-            
-            // Si on efface l'ID, on peut re-permettre la frappe sur l'ID
-            if (currentField === 'pass' && input.value.length < input.maxLength) {
-               // On reste sur le pass tant qu'il y a des chiffres ou si c'est vide
-            }
         }
     }
 
